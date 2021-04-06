@@ -1,0 +1,25 @@
+{#
+    Loosely inspired by the deprecated sphinx/themes/basic/defindex.html
+  #}
+  {%- extends "layout.html" %}
+  {% set title = _('Overview') %}
+  {% block body %}
+  <h1>Loupe documentation</h1>
+  <p><strong>Version</strong>: {{ release|e }}</p>
+  {% if last_updated %}<p><strong>Date</strong>: {{ last_updated|e }}</p>{% endif %}
+
+  <p>
+    Loupe is a Python library for solving parametric optimization problems. Loupe 
+    makes it easy to build and manipulate numerical models and efficiently solve 
+    optimization problems using built-in algorithmic differentiation (autograd).
+ </p>
+
+  <p><strong>Getting Started</strong></p>
+
+  <p><strong>User Guide</strong></p>
+
+  <p><strong>API Reference</strong></p>
+
+  <p><strong>Developer Guide</strong></p>
+
+  {% endblock %}
