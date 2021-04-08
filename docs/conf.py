@@ -59,7 +59,7 @@ html_theme_options = {
     'google_analytics_id': '267751812'
 }
 
-html_logo = ''
+html_logo = '_static/img/loupe.png'
 
 html_additional_pages = {
     'index': 'indexcontent.html'
