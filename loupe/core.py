@@ -1,7 +1,31 @@
 import numpy as np
 
+import loupe
 
-class array:
+class Node:
+    """Base class for nodes in the computational graph"""
+
+    def __add__(self, other):
+        return loupe.math.add(self, other)
+
+    def __sub__(self, other):
+        return loupe.math.subtract(self, other)
+
+    def __rsub__(self, other):
+        return loupe.math.subtract(other, self)
+
+    def __mul__(self, other):
+        return loupe.math.multiply(self, other)
+
+    __radd__ = __add__
+    __rmul__ = __mul__
+
+    @property
+    def requires_grad(self):
+        return False
+
+
+class array(Node):
     """Multidimensional array"""
 
     def __init__(self, object, requires_grad=False, dtype=None):
@@ -56,3 +80,12 @@ class Function(Node):
         
     def backward(self, grad):
         raise NotImplementedError
+
+
+def asarray(a):
+    if isinstance(a, (array, Function)):
+        return a
+    elif isinstance(a, (int, float, complex, list, tuple, np.ndarray)):
+        return loupe.array(a)
+    else:
+        raise TypeError(f'Unsupported type. Cannot create array from {a.__class__.__name__}')

@@ -6,8 +6,8 @@ class add(loupe.core.Function):
     """Add two arrays"""
 
     def __init__(self, x1, x2):
-        self.left = loupe.array(x1)
-        self.right = loupe.array(x2)
+        self.left = loupe.asarray(x1)
+        self.right = loupe.asarray(x2)
         super().__init__(self.left, self.right)
 
     def forward(self):
