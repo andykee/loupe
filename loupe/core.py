@@ -17,6 +17,9 @@ class Node:
     def __mul__(self, other):
         return loupe.math.multiply(self, other)
 
+    def __pow__(self, exponent):
+        return loupe.math.power(self, exponent)
+
     __radd__ = __add__
     __rmul__ = __mul__
 

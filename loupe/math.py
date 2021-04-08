@@ -77,3 +77,20 @@ class multiply(loupe.core.Function):
         if self.right.requires_grad:
             right_grad = np.conj(left) * grad
             self.right.backward(right_grad)
+
+
+class power(loupe.core.Function):
+    """Raise array to a power"""
+    def __init__(self, x1, x2):
+        self.input = loupe.asarray(x1)
+        self.exp = x2
+        super().__init__(self.input)
+
+    def forward(self):
+        input = self.input()
+        return np.power(input, self.exp)
+
+    def backward(self, grad):
+        input = self.input()
+        grad = self.exp * np.power(input, self.exp-1) * grad
+        self.input.backward(grad)
