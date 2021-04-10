@@ -27,6 +27,14 @@ class Node:
     __radd__ = __add__
     __rmul__ = __mul__
 
+    def __array__(self):
+        # https://numpy.org/doc/stable/user/basics.dispatch.html
+        return self.data
+    
+    @property
+    def data(self):
+        return None
+
     @property
     def requires_grad(self):
         return False
@@ -40,12 +48,6 @@ class array(Node):
         self._data = np.asarray(object, dtype=dtype)
         self.requires_grad = requires_grad
         self.grad = np.zeros(self._data.shape, dtype=float)
-
-    # TODO: replace __call__ with custom array container
-    # https://numpy.org/doc/stable/user/basics.dispatch.html
-    
-    def __call__(self):
-        return self.data
 
     @property
     def data(self):
@@ -87,7 +89,8 @@ class Function(Node):
     def __init__(self, *inputs):
         self._inputs = inputs
 
-    def __call__(self):
+    @property
+    def data(self):
         return np.asarray(self.forward())
 
     @property
@@ -112,3 +115,9 @@ def asarray(a):
         return array(a)
     else:
         raise TypeError(f'Unsupported type. Cannot create array from {a.__class__.__name__}')
+
+
+def rand(low=0.0, high=1.0, size=None, dtype=None, requires_grad=False):
+    """Return a new array with values drawn from a uniform distribution."""
+    return array(np.random.uniform(low=low, high=high, size=size), dtype=dtype, 
+                 requires_grad=requires_grad)

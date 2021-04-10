@@ -11,14 +11,14 @@ class add(loupe.core.Function):
         super().__init__(self.left, self.right)
 
     def forward(self):
-        left = self.left()
-        right = self.right()
+        left = self.left.data
+        right = self.right.data
         result = np.add(left, right)
         return result
     
     def backward(self, grad):
-        left = self.left()
-        right = self.right()
+        left = self.left.data
+        right = self.right.data
 
         if self.left.requires_grad:
             left_grad = _broadcast_grad(grad, left.shape)
