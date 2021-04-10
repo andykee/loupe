@@ -5,6 +5,10 @@ import loupe
 class Node:
     """Base class for nodes in the computational graph"""
 
+    # When return type is ambiguous to Numpy, prefer loupe Node objects over
+    # Numpy ndarrays
+    __array_priority__ = 1
+
     def __add__(self, other):
         return loupe.math.add(self, other)
 
@@ -35,7 +39,13 @@ class array(Node):
 
         self._data = np.asarray(object, dtype=dtype)
         self.requires_grad = requires_grad
-        self.grad = np.zeros(self.shape, dtype=float)
+        self.grad = np.zeros(self._data.shape, dtype=float)
+
+    # TODO: replace __call__ with custom array container
+    # https://numpy.org/doc/stable/user/basics.dispatch.html
+    
+    def __call__(self):
+        return self.data
 
     @property
     def data(self):
@@ -60,6 +70,16 @@ class array(Node):
     @grad.setter
     def grad(self, value):
         self._grad = value
+
+    def backward(self, grad):
+        if not self.requires_grad:
+            pass
+        else:
+            # accumulate gradient
+            if self.dtype in (np.float32, np.float64):
+                self.grad += grad.real
+            else:
+                self.grad += grad
 
 
 class Function(Node):
@@ -89,6 +109,6 @@ def asarray(a):
     if isinstance(a, (array, Function)):
         return a
     elif isinstance(a, (int, float, complex, list, tuple, np.ndarray)):
-        return loupe.array(a)
+        return array(a)
     else:
         raise TypeError(f'Unsupported type. Cannot create array from {a.__class__.__name__}')
