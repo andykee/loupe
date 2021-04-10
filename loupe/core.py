@@ -146,19 +146,3 @@ class Function(Node):
         
     def backward(self, grad):
         raise NotImplementedError
-
-
-def asarray(a):
-    if isinstance(a, (array, Function)):
-        return a
-    elif isinstance(a, (int, float, complex, list, tuple, np.ndarray)):
-        return array(a)
-    else:
-        raise TypeError(f'Unsupported type. Cannot create array from \
-                          {a.__class__.__name__}')
-
-
-def rand(low=0.0, high=1.0, size=None, dtype=None, requires_grad=False):
-    """Return a new array with values drawn from a uniform distribution."""
-    return array(np.random.uniform(low=low, high=high, size=size), 
-                 dtype=dtype, requires_grad=requires_grad)
