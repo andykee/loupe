@@ -21,10 +21,12 @@ class add(loupe.core.Function):
         right = self.right()
 
         if self.left.requires_grad:
-            self.left.backward(grad)
+            left_grad = _broadcast_grad(grad, left.shape)
+            self.left.backward(left_grad)
 
         if self.right.requires_grad:
-            self.right.backward(grad)
+            right_grad = _broadcast_grad(grad, right.shape)
+            self.right.backward(right_grad)
 
 class subtract(loupe.core.Function):
     """Subtract two arrays"""
@@ -46,10 +48,12 @@ class subtract(loupe.core.Function):
         right = self.right()
 
         if self.left.requires_grad:
-            self.left.backward(grad)
+            left_grad = _broadcast_grad(grad, left.shape)
+            self.left.backward(left_grad)
 
         if self.right.requires_grad:
-            self.right.backward(-grad) 
+            right_grad = _broadcast_grad(-grad, right.shape)
+            self.right.backward(right_grad) 
 
 class multiply(loupe.core.Function):
     """Multiply two arraays"""
@@ -72,11 +76,29 @@ class multiply(loupe.core.Function):
 
         if self.left.requires_grad:
             left_grad = np.conj(right) * grad
+            left_grad = _broadcast_grad(left_grad, left.shape)
             self.left.backward(left_grad)
         
         if self.right.requires_grad:
             right_grad = np.conj(left) * grad
+            right_grad = _broadcast_grad(right_grad, right.shape)
             self.right.backward(right_grad)
+
+
+def _broadcast_grad(grad, array_shape):
+    # REF: https://github.com/joelgrus/autograd
+    
+    # sum out the added dimensions
+    ndims_added = grad.ndim - len(array_shape)
+    for _ in range(ndims_added):
+        grad = grad.sum(axis=0)
+
+    # sum across broadcasted (but not added) dimensions
+    for n, dim in enumerate(array_shape):
+        if dim == 1:
+            grad = grad.sum(axis=n, keepdims=True)
+    
+    return grad
 
 
 class power(loupe.core.Function):
