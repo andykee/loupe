@@ -2,6 +2,7 @@ import numpy as np
 
 import loupe
 
+
 class Node:
     """Base class for nodes in the computational graph"""
 
@@ -31,6 +32,15 @@ class Node:
         # https://numpy.org/doc/stable/user/basics.dispatch.html
         return self.data
     
+    def __str__(self):
+        return np.array_str(self.data)
+
+    def __repr__(self):
+        prefix = 'array('
+        suffix = ')'
+        array_str = np.array2string(self.data, prefix=prefix, suffix=suffix)
+        return prefix + array_str + suffix
+
     @property
     def data(self):
         return None
@@ -49,6 +59,18 @@ class array(Node):
         self.requires_grad = requires_grad
         self.grad = np.zeros(self._data.shape, dtype=float)
 
+    def __getitem__(self, index):
+        # TODO: this action will break backward calculations
+        # Need to develop a custom slice class?
+        return self.data[index]
+
+    def __setitem__(self, index, value):
+        try:
+            value = np.asarray(value, dtype=self.dtype)
+            self._data[index] = value
+        except IndexError as e:
+            raise e
+
     @property
     def data(self):
         return self._data
@@ -56,6 +78,10 @@ class array(Node):
     @property
     def dtype(self):
         return self._data.dtype
+
+    @property
+    def shape(self):
+        return self._data.shape
 
     @property
     def requires_grad(self):
@@ -88,10 +114,17 @@ class Function(Node):
     """Base class for all functions"""
     def __init__(self, *inputs):
         self._inputs = inputs
+        self._cache = []
+        self._data = self.forward()
 
     @property
     def data(self):
-        return np.asarray(self.forward())
+        self._data = np.asarray(self.forward())
+        return self._data
+
+    @property
+    def shape(self):
+        return self._data.shape
 
     @property
     def inputs(self):
@@ -100,6 +133,13 @@ class Function(Node):
     @property
     def requires_grad(self):
         return any([input.requires_grad for input in self.inputs])
+
+    @property
+    def cache(self):
+        return self._cache
+
+    def cache_for_backward(self, *data):
+        self._cache = data
 
     def forward(self):
         raise NotImplementedError
@@ -114,10 +154,11 @@ def asarray(a):
     elif isinstance(a, (int, float, complex, list, tuple, np.ndarray)):
         return array(a)
     else:
-        raise TypeError(f'Unsupported type. Cannot create array from {a.__class__.__name__}')
+        raise TypeError(f'Unsupported type. Cannot create array from \
+                          {a.__class__.__name__}')
 
 
 def rand(low=0.0, high=1.0, size=None, dtype=None, requires_grad=False):
     """Return a new array with values drawn from a uniform distribution."""
-    return array(np.random.uniform(low=low, high=high, size=size), dtype=dtype, 
-                 requires_grad=requires_grad)
+    return array(np.random.uniform(low=low, high=high, size=size), 
+                 dtype=dtype, requires_grad=requires_grad)

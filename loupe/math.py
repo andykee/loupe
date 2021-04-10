@@ -13,12 +13,13 @@ class add(loupe.core.Function):
     def forward(self):
         left = self.left.data
         right = self.right.data
+        self.cache_for_backward(left, right)
+        
         result = np.add(left, right)
         return result
     
     def backward(self, grad):
-        left = self.left.data
-        right = self.right.data
+        left, right = self.cache
 
         if self.left.requires_grad:
             left_grad = _broadcast_grad(grad, left.shape)
@@ -39,13 +40,14 @@ class subtract(loupe.core.Function):
     def forward(self):
         left = self.left()
         right = self.right()
+        self.cache_for_backward(left, right)
+
         result = np.subtract(left, right)
         return result
     
     def backward(self, grad):
         
-        left = self.left()
-        right = self.right()
+        left, right = self.cache
 
         if self.left.requires_grad:
             left_grad = _broadcast_grad(grad, left.shape)
@@ -66,13 +68,14 @@ class multiply(loupe.core.Function):
     def forward(self):
         left = self.left()
         right = self.right()
+        self.cache_for_backward(left, right)
+
         result = np.multiply(left, right)
         return result 
 
     def backward(self, grad):
     
-        left = self.left()
-        right = self.right()
+        left, right = self.cache
 
         if self.left.requires_grad:
             left_grad = np.conj(right) * grad
@@ -110,9 +113,12 @@ class power(loupe.core.Function):
 
     def forward(self):
         input = self.input()
+        self.cache_for_backward(input)
+
         return np.power(input, self.exp)
 
     def backward(self, grad):
-        input = self.input()
+        input, = self.cache
+        
         grad = self.exp * np.power(input, self.exp-1) * grad
         self.input.backward(grad)
