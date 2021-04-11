@@ -83,7 +83,8 @@ add_module_names = True
 
 autodoc_default_options = {
     'member-order': 'alphabetical',
-    'exclude-members': '__init__, __weakref__, __dict__, __module__'
+    'exclude-members': '__init__, __weakref__, __dict__, __module__',
+    'undoc-members': False
 }
 
 autosummary_generate = True

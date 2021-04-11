@@ -29,7 +29,7 @@ class Node:
     __rmul__ = __mul__
 
     def __array__(self):
-        # https://numpy.org/doc/stable/user/basics.dispatch.html
+        # REF: https://numpy.org/doc/stable/user/basics.dispatch.html
         return self.data
     
     def __str__(self):
@@ -51,7 +51,20 @@ class Node:
 
 
 class array(Node):
-    """Multidimensional array"""
+    """Create a multidimensional array.
+    
+    Parameters
+    ----------
+    object : array_like
+        An array or other data type that can be interpreted as an array.
+    requires_grad : bool, optional
+        It True, gradients will be computed for this array. Default is False.
+    dtype : data-type, optional
+        The desired data-type for the array. If not given, the type will be
+        inferred from the supplied data object.
+    """
+
+    # TODO: masking, scaling, bounds?
 
     def __init__(self, object, requires_grad=False, dtype=None):
 
@@ -73,18 +86,29 @@ class array(Node):
 
     @property
     def data(self):
+        """The array's data.
+
+        Returns
+        -------
+        data : ndarray
+        """
         return self._data
 
     @property
     def dtype(self):
+        """Data type of the array's elements."""
         return self._data.dtype
 
     @property
     def shape(self):
+        """Tuple of array dimensions."""
         return self._data.shape
 
     @property
     def requires_grad(self):
+        """Is ``True`` if gradients need to be computed for this 
+        :class:`array`, ``False`` otherwise.
+        """
         return self._requires_grad
 
     @requires_grad.setter
@@ -93,6 +117,17 @@ class array(Node):
 
     @property
     def grad(self):
+        """Gradient of the array. 
+        
+        This attribute is zero by default and is only computed when 
+        :attr:`requires_grad` is True and 
+        :func:`~loupe.Function.backward` is called.
+
+        Returns
+        -------
+        grad : ndarray
+
+        """
         return self._grad
 
     @grad.setter
@@ -100,6 +135,14 @@ class array(Node):
         self._grad = value
 
     def backward(self, grad):
+        """Compute the gradient of the array.
+
+        Parameters
+        ----------
+        grad : array_like
+            Gradient with respect to the array.
+
+        """
         if not self.requires_grad:
             pass
         else:
@@ -111,7 +154,15 @@ class array(Node):
 
 
 class Function(Node):
-    """Base class for all functions"""
+    """Base class for representing functions that operate on :class:`~loupe.array` 
+    objects.
+
+    Parameters
+    ----------
+    inputs : list of :class:`array`
+        Array objects that the function operates on.
+
+    """
     def __init__(self, *inputs):
         self._inputs = inputs
         self._cache = []
@@ -119,6 +170,12 @@ class Function(Node):
 
     @property
     def data(self):
+        """The result of evaluating the function.
+
+        Returns
+        -------
+        data : ndarray
+        """
         self._data = np.asarray(self.forward())
         return self._data
 

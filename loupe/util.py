@@ -3,6 +3,40 @@ import numpy as np
 import loupe
 
 def asarray(a):
+    """Convert the input to an array.
+    
+    Parameters
+    ----------
+    a : array_like
+        Input data, in any form that can be converted to an array. This 
+        includes lists, lists of tuples, tuples, tuples of tuples, 
+        tuples of lists and ndarrays.
+
+    Returns
+    -------
+    out : :class:`array`
+        Input data packaged as an :class:`array`. If input is already an
+        :class:`array`, the original input is returned.
+    
+    Examples
+    --------
+    Convert a list into an array:
+
+    .. code:: pycon
+
+        >>> a = [1,2,3]
+        >>> loupe.asarray(a)
+        array([ 1.,2., 3.])
+
+    Existing arrays are not copied:
+
+    .. code:: pycon
+
+        >>> a = loupe.array([1,2,3])
+        >>> loupe.asarray(a) is a
+        True
+
+    """
     if isinstance(a, (loupe.array, loupe.core.Function)):
         return a
     elif isinstance(a, (int, float, complex, list, tuple, np.ndarray)):
@@ -13,7 +47,28 @@ def asarray(a):
 
 
 def zeros(shape, dtype=None, requires_grad=False):
-    """Return a new array with values set to zeros."""
+    """Return a new array with values set to zeros.
+    
+    Parameters
+    ----------
+    shape : int or tuple of ints
+        Shape of the array
+    dtype : data type, optional
+        Desired data type for the array
+    requires_grad : bool, optional
+        It True, gradients will be computed for this array. Default is False.
+
+    Returns
+    -------
+    out : :class:`array`
+        Array of zeros with the given shape and dtype.
+
+    See Also 
+    --------
+    zeros_like : Return an array of zeros with shape and type of input.
+    ones : Return a new array with values set to ones.
+    
+    """
     return loupe.array(np.zeros(shape), dtype=dtype, 
                        requires_grad=requires_grad)
 
