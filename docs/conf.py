@@ -59,7 +59,8 @@ html_static_path = ['_static']
 html_theme_options = {
     'show_prev_next': False,
     'github_url': 'https://github.com/andykee/loupe',
-    'google_analytics_id': '267751812'
+    'google_analytics_id': '267751812',
+    "footer_items": ["copyright"]
 }
 
 html_logo = '_static/img/loupe.png'
@@ -67,8 +68,6 @@ html_logo = '_static/img/loupe.png'
 html_additional_pages = {
     'index': 'indexcontent.html'
 }
-
-html_show_sphinx = False
 
 html_show_sourcelink = False
 
