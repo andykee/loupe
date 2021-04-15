@@ -118,8 +118,8 @@ class subtract(loupe.core.Function):
         super().__init__(self.left, self.right)
 
     def forward(self):
-        left = self.left()
-        right = self.right()
+        left = self.left.data
+        right = self.right.data
         self.cache_for_backward(left, right)
 
         result = np.subtract(left, right)
@@ -186,8 +186,8 @@ class multiply(loupe.core.Function):
         super().__init__(self.left, self.right)
 
     def forward(self):
-        left = self.left()
-        right = self.right()
+        left = self.left.data
+        right = self.right.data
         self.cache_for_backward(left, right)
 
         result = np.multiply(left, right)
@@ -279,7 +279,7 @@ class power(loupe.core.Function):
         super().__init__(self.input)
 
     def forward(self):
-        input = self.input()
+        input = self.input.data
         self.cache_for_backward(input)
 
         return np.power(input, self.exp)

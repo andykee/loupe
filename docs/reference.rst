@@ -42,6 +42,14 @@ Math operations
     power
     einsum
 
+Cost functions
+--------------
+.. autosummary::
+    :toctree: generated/
+    :template: ufunc.rst
+
+    sserror
+
 Function API
 ------------
 .. autosummary::
