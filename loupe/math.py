@@ -244,7 +244,7 @@ class power(loupe.core.Function):
 
     Notes
     -----
-    Equivalent to *x1 \*\* x2*.
+    Equivalent to `x1 ** x2`.
 
     Examples
     --------
