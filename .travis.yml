@@ -1,0 +1,12 @@
+language: python
+python:
+  - "3.7"
+install:
+  - pip install -e .
+  - pip install pytest
+  - pip install pytest-cov
+  - pip install coveralls
+script:
+  - pytest --cov=loupe tests/
+after_success:
+  - coveralls
