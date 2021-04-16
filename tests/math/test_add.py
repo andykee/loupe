@@ -42,6 +42,12 @@ def test_broadcast_add():
     res = a + b
     assert np.array_equal(res, np.add(a.data, b.data))
 
+def test_broadcast_add2():
+    a = loupe.rand(size=(2,3))
+    b = loupe.rand(size=(1,3))
+    res = a + b
+    assert np.array_equal(res, np.add(a.data, b.data)) 
+
 def test_broadcast_add_backward():
     a = loupe.rand(size=(2,3), requires_grad=True)
     b = loupe.rand(size=3, requires_grad=True)
@@ -49,3 +55,11 @@ def test_broadcast_add_backward():
     res.backward(grad=np.ones((2,3)))
     assert np.array_equal(a.grad, np.ones((2,3)))
     assert np.array_equal(b.grad, np.array([2,2,2]))
+
+def test_broadcast_add_backward2():
+    a = loupe.rand(size=(2,3), requires_grad=True)
+    b = loupe.rand(size=(1,3), requires_grad=True)
+    res = a + b 
+    res.backward(grad=np.ones((2,3)))
+    assert np.array_equal(a.grad, np.ones((2,3)))
+    assert np.array_equal(b.grad, np.array([[2,2,2]]))
