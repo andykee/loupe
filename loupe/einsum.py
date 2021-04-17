@@ -36,8 +36,13 @@ class einsum(loupe.core.Function):
     def __init__(self, *operands, dtype=None):
         # NOTE: I'm not sure this will work with complex inputs
         
-        in_subs, out_sub, opers = _parse_einsum_input(operands)
-        
+        # Use numpy's _parse_einsum_input to tear apart the subscripts. Note
+        # that although _parse_einsum_input also returns the operands, it 
+        # casts them to numpy arrays which is not desirable here so we'll
+        # just manually yank out the operands to preserve any loupe objects.
+        in_subs, out_sub, _ = _parse_einsum_input(operands)
+        opers = operands[1:] 
+
         self.in_subs = in_subs
         self.out_sub = out_sub
         self.operands = [loupe.asarray(oper) for oper in opers]
@@ -57,7 +62,6 @@ class einsum(loupe.core.Function):
         self.cache_for_backward(*operands, result)
    
         return result
-        
         
     def backward(self, grad):
         in_subs_fw = self.in_subs.split(',')
