@@ -131,6 +131,14 @@ class array(Node):
     def grad(self, value):
         self._grad = value
 
+    def zero_grad(self):
+        """Zero the array gradient."""
+        self.grad = np.zeros_like(self._data)
+
+    def flatten(self):
+        """Return the array flattened into one dimension."""
+        return self._data.flatten()
+
     def backward(self, grad):
         """Compute the gradient of the array.
 
