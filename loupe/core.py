@@ -78,11 +78,8 @@ class array(Node):
         return self.data[index]
 
     def __setitem__(self, index, value):
-        try:
-            value = np.asarray(value, dtype=self.dtype)
-            self._data[index] = value
-        except IndexError as e:
-            raise e
+        value = np.asarray(value, dtype=self.dtype)
+        self._data[index] = value
 
     @property
     def data(self):
