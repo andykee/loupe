@@ -106,3 +106,4 @@ def randn(loc=0.0, std=1.0, size=None, dtype=None, requires_grad=False):
     """Return a new array with values drawn from a normal distribution."""
     return loupe.array(np.random.normal(loc=loc, scale=std, size=size), dtype=dtype, 
                        requires_grad=requires_grad)
+                       
