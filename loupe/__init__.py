@@ -5,7 +5,7 @@ from loupe.math import add, subtract, multiply, power
 from loupe.optimize import optimize
 from loupe.shape import circle, circlemask, hexagon, slit
 from loupe.util import (asarray, zeros, zeros_like, ones, ones_like, rand, 
-                        randn)
+                        randn, centroid)
 from loupe.zernike import (zernike, zernike_compose, zernike_basis, 
                            zernike_fit, zernike_remove)
 

@@ -106,4 +106,28 @@ def randn(loc=0.0, std=1.0, size=None, dtype=None, requires_grad=False):
     """Return a new array with values drawn from a normal distribution."""
     return loupe.array(np.random.normal(loc=loc, scale=std, size=size), dtype=dtype, 
                        requires_grad=requires_grad)
-                       
+
+
+def centroid(img):
+    """Compute image centroid location.
+
+    Parameters
+    ----------
+    img : array_like
+        Input array.
+
+    Returns
+    -------
+    tuple
+        ``(x,y)`` centroid location.
+    """
+
+    img = np.asarray(img)
+    img = img/np.sum(img)
+    nr, nc = img.shape
+    yy, xx = np.mgrid[0:nr, 0:nc]
+
+    x = np.dot(xx.ravel(), img.ravel())
+    y = np.dot(yy.ravel(), img.ravel())
+
+    return x, y                       

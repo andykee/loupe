@@ -2,6 +2,7 @@ from math import factorial
 
 import numpy as np
 
+import loupe
 from loupe.shape import mesh
 
 
@@ -415,11 +416,11 @@ def zernike_coordinates(mask, shift=None, rotate=0):
 
     if shift is None:
         center = np.asarray(mask.shape)/2
-        centroid = util.centroid(mask)
+        centroid = loupe.centroid(mask)
         shift = (centroid[1]-center[1], centroid[0]-center[0])
 
 
-    yy, xx = util.mesh(mask.shape, shift)
+    yy, xx = mesh(mask.shape, shift)
 
     r = np.abs(xx+1j*yy)
     rho = r/np.max(r*mask)  # rho is defined to be 1 on the edge of the aperture

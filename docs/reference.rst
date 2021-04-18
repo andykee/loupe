@@ -60,14 +60,6 @@ Optimization functions
 
     optimize
 
-Optimization helpers
---------------------
-.. autosummary::
-    :toctree: generated/
-
-    gradcheck
-    finite_difference_grad
-
 Function API
 ------------
 .. autosummary::
@@ -75,3 +67,27 @@ Function API
     :template: Function.rst
     
     core.Function
+
+Utilities
+=========
+
+Shapes
+------
+.. autosummary::
+    :toctree: generated/
+
+    circle
+    circlemask
+    hexagon
+    slit
+
+Zernike polynomials
+-------------------
+.. autosummary::
+    :toctree: generated/
+
+    zernike
+    zernike_basis
+    zernike_compose
+    zernike_fit
+    zernike_remove
