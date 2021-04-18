@@ -50,6 +50,24 @@ Cost functions
 
     sserror
 
+Optimization
+============
+
+Optimization functions
+----------------------
+.. autosummary::
+    :toctree: generated/
+
+    optimize
+
+Optimization helpers
+--------------------
+.. autosummary::
+    :toctree: generated/
+
+    gradcheck
+    finite_difference_grad
+
 Function API
 ------------
 .. autosummary::
