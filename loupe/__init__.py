@@ -1,7 +1,7 @@
 from loupe.core import array
 from loupe.cost import sserror
 from loupe.einsum import einsum
-from loupe.math import add, subtract, multiply, power
+from loupe.numeric import add, subtract, multiply, power, exp, expc
 from loupe.optimize import optimize
 from loupe.shape import circle, circlemask, hexagon, slit
 from loupe.util import (asarray, zeros, zeros_like, ones, ones_like, rand, 

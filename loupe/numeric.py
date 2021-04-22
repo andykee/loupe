@@ -289,3 +289,112 @@ class power(loupe.core.Function):
         
         grad = self.exp * np.power(input, self.exp-1) * grad
         self.input.backward(grad)
+
+
+class exp(loupe.core.Function):
+    """Calculate the exponential of the input array.
+
+    Parameters
+    ----------
+    x : array_like
+        Input array
+
+    Returns
+    -------
+    out : Function
+        Output array, element-wise exponential of x.
+
+    """
+    def __init__(self, x):
+        self.input = loupe.asarray(x)
+        super().__init__(self.input)
+
+    def forward(self):            
+        result = np.exp(self.input.data)
+        self.cache_for_backward(result)
+        return result
+
+    def backward(self, grad):
+        result, = self.cache
+        if np.any(np.iscomplex(result)):
+            grad = grad * np.conj(result)
+        else:
+            grad *= result
+        self.input.backward(grad)
+
+
+class expc(loupe.core.Function):
+    """Calculate the exponential of the input array * 1j.
+
+    Parameters
+    ----------
+    x : array_like
+        Input array
+
+    Returns
+    -------
+    out : Function
+        Output array, element-wise exponential of x*1j.
+
+    Notes
+    -----
+    *loupe.expc(x)* is equivalent to *loupe.exp(x*1j)*.
+
+    """
+    def __init__(self, x):
+        self.input = loupe.asarray(x)
+        super().__init__(self.input)
+
+    def forward(self):
+        x = self.input.data
+        result = np.empty_like(x, dtype=np.complex)
+        result.real = np.cos(x)
+        result.imag = np.sin(x)
+        self.cache_for_backward(result)
+        return result
+
+    def backward(self, grad):
+        result, = self.cache
+        grad = np.imag(grad * np.conj(result))
+        # this is equivalent and maybe slightly faster?
+        # grad = grad.imag * result.real - grad.real * result.imag
+        self.input.backward(grad)
+
+
+class slice(loupe.core.Function):
+    """Return a slice of the input array.
+
+    Parameters
+    ----------
+    x : array_like
+        Input array
+    slc : slice
+        Python slice object
+        
+    Returns
+    -------
+    out : Function
+        Slice of *x*
+
+    Notes
+    -----
+    :func:`array.__getitem__` is aliased to :class:`slice`, allowng slices to 
+    be created using the familiar Python ``[]`` notation.
+
+    """
+    def __init__(self, x, slc):
+
+        self.input = loupe.asarray(x)
+        self.slc = slc
+        super().__init__(self.input)
+
+    def forward(self):
+        result = self.input.data
+        self.cache_for_backward(result)
+        return result[self.slc]
+
+    def backward(self, grad):
+        result, = self.cache
+        result_grad = np.zeros(result.shape, dtype=result.dtype)
+        result_grad[self.slc] = grad
+        self.input.backward(result_grad)

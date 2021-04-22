@@ -11,19 +11,19 @@ class Node:
     __array_priority__ = 1
 
     def __add__(self, other):
-        return loupe.math.add(self, other)
+        return loupe.numeric.add(self, other)
 
     def __sub__(self, other):
-        return loupe.math.subtract(self, other)
+        return loupe.numeric.subtract(self, other)
 
     def __rsub__(self, other):
-        return loupe.math.subtract(other, self)
+        return loupe.numeric.subtract(other, self)
 
     def __mul__(self, other):
-        return loupe.math.multiply(self, other)
+        return loupe.numeric.multiply(self, other)
 
     def __pow__(self, exponent):
-        return loupe.math.power(self, exponent)
+        return loupe.numeric.power(self, exponent)
 
     __radd__ = __add__
     __rmul__ = __mul__
@@ -40,6 +40,9 @@ class Node:
         suffix = ')'
         array_str = np.array2string(self.data, prefix=prefix, suffix=suffix)
         return prefix + array_str + suffix
+
+    def __getitem__(self, index):
+        return loupe.numeric.slice(self.data, index)
 
     @property
     def data(self):
@@ -71,11 +74,6 @@ class array(Node):
         self._data = np.asarray(object, dtype=dtype)
         self.requires_grad = requires_grad
         self.grad = np.zeros(self._data.shape, dtype=float)
-
-    def __getitem__(self, index):
-        # TODO: this action will break backward calculations
-        # Need to develop a custom slice class?
-        return self.data[index]
 
     def __setitem__(self, index, value):
         value = np.asarray(value, dtype=self.dtype)

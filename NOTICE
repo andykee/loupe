@@ -3,8 +3,9 @@ licensed.  We list these here.
 
 
 Name: Lentil
-Files: loupe/shape.py [mesh, circle, circlemask, hexagon, slit]
-       loupe/zernike.py
+Files: loupe/shape.py (mesh, circle, circlemask, hexagon, slit)
+       loupe/util.py (centroid)
+       loupe/zernike.py (*)
 License: 3-clause BSD
   Copyright (c) 2020, California Institute of Technology ("Caltech"). U.S.
   Government sponsorship acknowledged.
