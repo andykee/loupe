@@ -6,7 +6,3 @@
 .. autoclass:: asarray
     :members:
     :inherited-members:
-
-    
-
-    

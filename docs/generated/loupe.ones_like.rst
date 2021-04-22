@@ -6,7 +6,3 @@
 .. autoclass:: ones_like
     :members:
     :inherited-members:
-
-    
-
-    

@@ -16,7 +16,7 @@ def optimize(fun, params, ftol=1e-9, gtol=1e-5, maxiter=1000,
 
     Parameters
     ----------
-    fun : :class:`loupe.Function`
+    fun : :class:`~loupe.core.Function`
         The objective function to be minimized.
     params : list of :class:`array` or :class:`array`
         Parameters in `fun` to optimize.

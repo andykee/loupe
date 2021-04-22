@@ -6,7 +6,3 @@
 .. autoclass:: ones
     :members:
     :inherited-members:
-
-    
-
-    

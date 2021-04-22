@@ -6,7 +6,3 @@
 .. autoclass:: zeros_like
     :members:
     :inherited-members:
-
-    
-
-    

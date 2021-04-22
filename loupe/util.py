@@ -118,7 +118,7 @@ def centroid(img):
 
     Returns
     -------
-    tuple
+    centroid : tuple
         ``(x,y)`` centroid location.
     """
 

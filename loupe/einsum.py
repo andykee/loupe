@@ -28,7 +28,7 @@ class einsum(loupe.core.Function):
 
     Returns
     -------
-    out : Function
+    out : :class:`~loupe.core.Function`
         The result of the requested Einstein summation operation.
         
 

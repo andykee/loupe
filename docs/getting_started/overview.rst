@@ -5,10 +5,7 @@ Overview
 ********
 
 Loupe is a Python library for defining and solving optimization problems by 
-minimizing scalar cost functions. It was originally developed to solve 
-parametric `phase retrieval <https://en.wikipedia.org/wiki/Phase_retrieval>`_ 
-problems but is able to solvea wide variety of general optimization problems 
-as well.
+minimizing scalar cost functions. 
 
 Loupe was designed to be:
 

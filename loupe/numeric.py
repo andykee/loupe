@@ -14,7 +14,7 @@ class add(loupe.core.Function):
 
     Returns
     -------
-    out : Function
+    out : :class:`~loupe.core.Function`
         The sum of *x1* and *x2*, element-wise.
 
     Notes
@@ -81,7 +81,7 @@ class subtract(loupe.core.Function):
 
     Returns
     -------
-    out : Function
+    out : :class:`~loupe.core.Function`
         The difference of *x1* and *x2*, element-wise.
 
     Notes
@@ -149,7 +149,7 @@ class multiply(loupe.core.Function):
 
     Returns
     -------
-    out : Function
+    out : :class:`~loupe.core.Function`
         The product of *x1* and *x2*, element-wise.
 
     Notes
@@ -239,7 +239,7 @@ class power(loupe.core.Function):
 
     Returns
     -------
-    out : Function
+    out : :class:`~loupe.core.Function`
         The bases in *x1* raised to the exponent(s) in *x2*.
 
     Notes
@@ -301,7 +301,7 @@ class exp(loupe.core.Function):
 
     Returns
     -------
-    out : Function
+    out : :class:`~loupe.core.Function`
         Output array, element-wise exponential of x.
 
     """
@@ -333,7 +333,7 @@ class expc(loupe.core.Function):
 
     Returns
     -------
-    out : Function
+    out : :class:`~loupe.core.Function`
         Output array, element-wise exponential of x*1j.
 
     Notes
@@ -373,7 +373,7 @@ class slice(loupe.core.Function):
         
     Returns
     -------
-    out : Function
+    out : :class:`~loupe.core.Function`
         Slice of *x*
 
     Notes

@@ -6,7 +6,3 @@
 .. autoclass:: rand
     :members:
     :inherited-members:
-
-    
-
-    

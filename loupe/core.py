@@ -162,8 +162,15 @@ class Function(Node):
 
     Parameters
     ----------
-    inputs : list of :class:`array`
+    inputs : list of :class:`~loupe.array`
         Array objects that the function operates on.
+
+    Notes
+    -----
+    ``Function`` only defines the interface for objects that operate on 
+    :class:`~loupe.array` objects - it doesn't actually implement any useful
+    functionality. A complete list of available functions is available
+    :ref:`here <api.functions>`.
 
     """
     def __init__(self, *inputs):
@@ -184,25 +191,79 @@ class Function(Node):
 
     @property
     def shape(self):
+        """Tuple of :attr:`data` dimensions.""" 
         return self._data.shape
 
     @property
     def inputs(self):
+        """List of array inputs the function operates on."""
         return self._inputs
 
     @property
     def requires_grad(self):
+        """Is ``True`` if any of the function's inputs have 
+        ``requires_grad=True``, ``False`` otherwise.
+        """
         return any([input.requires_grad for input in self.inputs])
 
     @property
     def cache(self):
+        """Data that has been saved by :func:`cache_for_backward`.
+
+        Returns
+        -------
+        cache : list
+
+        """
         return self._cache
 
     def cache_for_backward(self, *data):
+        """Save data for a future call to :func:`backward`.
+
+        Saved data can be accessed through the :attr:`cache` attribute. 
+
+        Parameters
+        ----------
+        data : list_like
+            List of data to cache. Cached data should *probably* be ndarrays,
+            but nothing prevents the caching of any Python type.
+
+        Warning
+        -------
+        Care must be taken that cached data is not modified in place after
+        calling :func:`forward`. Doing so will make the cached data stale and
+        its resulting use during a call to :func:`backward` will be invalid.
+
+        Notes
+        -----
+        This method should be called at most once, and only from inside the 
+        :func:`forward` method.
+
+        """
         self._cache = data
 
     def forward(self):
+        """Performs the operation.
+
+        This method should by overridden by all subclasses.
+
+        Returns
+        -------
+        out : ndarray
+            The result of the operation.
+
+        """
         raise NotImplementedError
         
     def backward(self, grad):
+        """Defines a formula for differentiating the operation.
+
+        This method should be overridden by all subclasses.
+
+        Parameters
+        ----------
+        grad : array_like
+            The gradient with respect to the function output.
+
+        """
         raise NotImplementedError

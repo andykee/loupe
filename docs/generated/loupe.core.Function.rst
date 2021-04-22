@@ -4,3 +4,34 @@
 .. currentmodule:: loupe.core
 
 .. autoclass:: Function
+    :members:
+    :inherited-members:
+
+    
+    .. rubric:: Attributes
+    .. autosummary::
+        
+        cache
+        
+        data
+        
+        inputs
+        
+        requires_grad
+        
+        shape
+        
+    
+
+    
+    .. rubric:: Methods
+    .. autosummary::
+        
+        
+        backward
+        
+        cache_for_backward
+        
+        forward
+        
+    

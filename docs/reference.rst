@@ -1,16 +1,19 @@
 .. _api:
 
+.. currentmodule:: loupe
+
 *************
 API Reference
 *************
 
-.. currentmodule:: loupe
+.. _api.array:
 
-Arrays
-======
+Array
+=====
 
 .. autosummary::
     :toctree: generated/
+    :caption: Array
 
     array
 
@@ -27,46 +30,50 @@ Array creation
     rand
     randn
     
-Universal functions
-===================
+
+.. _api.functions:
+
+Functions
+=========
 
 Math operations
 ---------------
 .. autosummary::
     :toctree: generated
-    :template: ufunc.rst
+    :template: function.rst
+    :caption: Functions
 
     add
     subtract
     multiply
     power
+    exp
+    expc
     einsum
 
 Cost functions
 --------------
 .. autosummary::
     :toctree: generated/
-    :template: ufunc.rst
+    :template: function.rst
 
     sserror
-
-Optimization
-============
-
-Optimization functions
-----------------------
-.. autosummary::
-    :toctree: generated/
-
-    optimize
 
 Function API
 ------------
 .. autosummary::
     :toctree: generated/
-    :template: Function.rst
     
     core.Function
+
+Optimization
+============
+
+.. autosummary::
+    :toctree: generated/
+    :caption: Optimization
+
+    optimize
 
 Utilities
 =========
@@ -75,11 +82,19 @@ Shapes
 ------
 .. autosummary::
     :toctree: generated/
+    :caption: Utilities
 
     circle
     circlemask
     hexagon
     slit
+
+Image tools
+-----------
+.. autosummary::
+    :toctree: generated/
+
+    centroid
 
 Zernike polynomials
 -------------------

@@ -13,7 +13,7 @@ class absolute_square(loupe.core.Function):
 
     Returns
     -------
-    out : Function
+    out : :class:`~loupe.core.Function`
         Element-wise *abs(x**2)*
 
     Notes
