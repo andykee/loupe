@@ -51,6 +51,14 @@ Math operations
     expc
     einsum
 
+Array manipulation
+------------------
+.. autosummary::
+    :toctree: generated/
+    :template: function.rst
+
+    slice
+
 Cost functions
 --------------
 .. autosummary::
