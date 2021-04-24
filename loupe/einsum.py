@@ -30,7 +30,10 @@ class einsum(loupe.core.Function):
     -------
     out : :class:`~loupe.core.Function`
         The result of the requested Einstein summation operation.
-        
+    
+    See also
+    --------
+    :class:`~loupe.tensordot`
 
     """
     def __init__(self, *operands, dtype=None):

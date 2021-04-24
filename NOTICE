@@ -40,6 +40,7 @@ License: 3-clause BSD
 
 Name: Chainer
 Files: loupe/einsum.py
+       loupe/tensordot.py
 License: MIT
   Copyright (c) 2015 Preferred Infrastructure, Inc.
   Copyright (c) 2015 Preferred Networks, Inc.
