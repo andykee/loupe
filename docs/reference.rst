@@ -105,6 +105,8 @@ Image tools
     :toctree: generated/
 
     centroid
+    shift
+    register
 
 Zernike polynomials
 -------------------

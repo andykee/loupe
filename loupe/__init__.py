@@ -32,7 +32,9 @@ from loupe.util import (
     ones_like, 
     rand, 
     randn, 
-    centroid
+    centroid,
+    shift,
+    register
 )
 
 from loupe.zernike import (
