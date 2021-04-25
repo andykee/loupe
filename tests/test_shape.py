@@ -67,7 +67,7 @@ def test_shift():
 
 
 def test_circle():
-    c = loupe.circle((15,15), 5)
+    c = loupe.circlemask((15,15), 5)
     c[c > 0] = 1
     assert np.array_equal(c, circle)
 
