@@ -8,6 +8,11 @@ def test_zernike_rho_theta():
         loupe.zernike(mask=1, index=1, normalize=True, rho=1, theta=None)
 
 
+def test_zernike_positive():
+    with pytest.raises(ValueError):
+        loupe.zernike(mask=1, index=-1)
+
+
 def test_zernike_basis():
     basis = loupe.zernike_basis(mask=np.ones((3, 3)), modes=1, vectorize=False)
     assert np.array_equal(basis, np.ones((1, 3, 3)))
