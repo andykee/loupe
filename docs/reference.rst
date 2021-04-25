@@ -49,7 +49,9 @@ Math operations
     power
     exp
     expc
+    absolute_square
     einsum
+    tensordot
 
 Array manipulation
 ------------------
