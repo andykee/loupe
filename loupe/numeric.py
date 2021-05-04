@@ -347,7 +347,7 @@ class expc(loupe.core.Function):
 
     def forward(self):
         x = self.input.data
-        result = np.empty_like(x, dtype=np.complex)
+        result = np.empty_like(x, dtype=complex)
         result.real = np.cos(x)
         result.imag = np.sin(x)
         self.cache_for_backward(result)

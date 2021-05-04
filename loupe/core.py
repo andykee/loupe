@@ -42,7 +42,7 @@ class Node:
         return prefix + array_str + suffix
 
     def __getitem__(self, index):
-        return loupe.numeric.slice(self.data, index)
+        return loupe.numeric.slice(self, index)
 
     @property
     def data(self):
