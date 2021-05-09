@@ -50,6 +50,7 @@ Math operations
     exp
     expc
     absolute_square
+    dft2
     einsum
     tensordot
 

@@ -6,6 +6,8 @@ from loupe.cost import sserror
 
 from loupe.einsum import einsum
 
+from loupe.fourier import dft2
+
 from loupe.numeric import (
     add, 
     subtract, 
