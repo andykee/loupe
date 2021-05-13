@@ -26,7 +26,7 @@ class absolute_square(loupe.core.Function):
         super().__init__(self.input)
 
     def forward(self):
-        input = self.input.data
+        input = self.input.getdata()
         result = np.square(np.abs(input))
         self.cache_for_backward(input)
         return result

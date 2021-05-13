@@ -136,7 +136,7 @@ class sserror(loupe.core.Function):
         resid : ndarray
             Residual error between `f` and `g`.
         """
-        g = self.g.data
+        g = self.g.getdata()
 
         if self.gain_bias_invariant:
             _g = self._G(g, self.mask)
@@ -157,7 +157,7 @@ class sserror(loupe.core.Function):
         return resid
 
     def forward(self):
-        g = self.g.data
+        g = self.g.getdata()
 
         if self.gain_bias_invariant:
             _g = self._G(g, self.mask)

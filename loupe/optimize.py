@@ -143,7 +143,7 @@ class Blueprint:
         if x is not None:
             if not np.all(x == self.x):
                 self.x = x
-        return self.fun.data
+        return self.fun.getdata()
     
     def grad(self, x=None):
         # Compute the gradient of all optimization parameters at x and 

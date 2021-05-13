@@ -46,6 +46,7 @@ The available math operations are provided below:
     exp
     expc
     absolute_square
+    dft2
     einsum
     tensordot    
 
@@ -58,10 +59,8 @@ Array manipulation
 
     slice
 
-Special functions
-=================
-
-
+.. Special functions
+.. =================
 
 
 Broadcasting

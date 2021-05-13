@@ -90,8 +90,8 @@ class dft2(loupe.core.Function):
         super().__init__(self.input, self.alpha)
 
     def forward(self):
-        input = self.input.data
-        alpha = _sanitize_ordered_pair(self.alpha.data, dtype=float)
+        input = self.input.getdata()
+        alpha = _sanitize_ordered_pair(self.alpha.getdata(), dtype=float)
         shift = _sanitize_ordered_pair(self.shift, dtype=float)
 
         if self.output_shape is None:

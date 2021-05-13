@@ -59,7 +59,7 @@ class einsum(loupe.core.Function):
     
     def forward(self):
         subscripts = f'{self.in_subs}->{self.out_sub}'
-        operands = [oper.data for oper in self.operands]
+        operands = [oper.getdata() for oper in self.operands]
         result = np.einsum(subscripts, *operands)
         
         self.cache_for_backward(*operands, result)

@@ -49,8 +49,25 @@ class Node:
         return None
 
     @property
-    def requires_grad(self):
-        return False
+    def dtype(self):
+        """Data type of the array's elements."""
+        return self.data.dtype
+
+    def getdata(self, copy=False, dtype=None):
+        """Return the array's data.
+
+        Parameters
+        ----------
+        copy : bool, optional
+            Whether to force a copy of the underlying data to be returned.
+        dtype : type or numpy dtype, optional
+            The dtype of the returned data.
+
+        """
+        data = self.data.copy() if copy else self.data
+        if dtype is None:
+            dtype = self.dtype
+        return data.astype(dtype)
 
 
 class array(Node):
@@ -90,11 +107,6 @@ class array(Node):
         return self._data
 
     @property
-    def dtype(self):
-        """Data type of the array's elements."""
-        return self._data.dtype
-
-    @property
     def shape(self):
         """Tuple of array dimensions."""
         return self._data.shape
@@ -128,6 +140,13 @@ class array(Node):
     @grad.setter
     def grad(self, value):
         self._grad = value
+
+    def getdata(self, copy=False, dtype=None):
+        
+        data = self.data.copy() if copy else self.data
+        if dtype is None:
+            dtype = self.dtype
+        return data.astype(dtype)
 
     def zero_grad(self):
         """Zero the array gradient."""
@@ -267,3 +286,15 @@ class Function(Node):
 
         """
         raise NotImplementedError
+
+
+Function.getdata.__doc__ = \
+"""Evaluate the function and return the result.
+
+Parameters
+----------
+copy : bool, optional
+    Whether to force a copy of the underlying data to be returned.
+dtype : type or numpy dtype, optional
+    The dtype of the returned data.
+"""

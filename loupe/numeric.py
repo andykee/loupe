@@ -51,8 +51,8 @@ class add(loupe.core.Function):
         super().__init__(self.left, self.right)
 
     def forward(self):
-        left = self.left.data
-        right = self.right.data
+        left = self.left.getdata()
+        right = self.right.getdata()
         self.cache_for_backward(left, right)
         
         result = np.add(left, right)
@@ -118,8 +118,8 @@ class subtract(loupe.core.Function):
         super().__init__(self.left, self.right)
 
     def forward(self):
-        left = self.left.data
-        right = self.right.data
+        left = self.left.getdata()
+        right = self.right.getdata()
         self.cache_for_backward(left, right)
 
         result = np.subtract(left, right)
@@ -186,8 +186,8 @@ class multiply(loupe.core.Function):
         super().__init__(self.left, self.right)
 
     def forward(self):
-        left = self.left.data
-        right = self.right.data
+        left = self.left.getdata()
+        right = self.right.getdata()
         self.cache_for_backward(left, right)
 
         result = np.multiply(left, right)
@@ -279,7 +279,7 @@ class power(loupe.core.Function):
         super().__init__(self.input)
 
     def forward(self):
-        input = self.input.data
+        input = self.input.getdata()
         self.cache_for_backward(input)
 
         return np.power(input, self.exp)
@@ -310,7 +310,7 @@ class exp(loupe.core.Function):
         super().__init__(self.input)
 
     def forward(self):            
-        result = np.exp(self.input.data)
+        result = np.exp(self.input.getdata())
         self.cache_for_backward(result)
         return result
 
@@ -346,7 +346,7 @@ class expc(loupe.core.Function):
         super().__init__(self.input)
 
     def forward(self):
-        x = self.input.data
+        x = self.input.getdata()
         result = np.empty_like(x, dtype=complex)
         result.real = np.cos(x)
         result.imag = np.sin(x)
@@ -389,7 +389,7 @@ class slice(loupe.core.Function):
         super().__init__(self.input)
 
     def forward(self):
-        result = self.input.data
+        result = self.input.getdata()
         self.cache_for_backward(result)
         return result[self.slc]
 

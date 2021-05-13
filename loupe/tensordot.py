@@ -38,8 +38,8 @@ class tensordot(loupe.core.Function):
         super().__init__(a,b)
 
     def forward(self):
-        a = self.a.data
-        b = self.b.data
+        a = self.a.getdata()
+        b = self.b.getdata()
         self.cache_for_backward(a, b)
 
         result, a_axes, b_axes, c_axes = _tensordot(a, b, self.axes, self.a_axes, self.b_axes, self.c_axes)

@@ -12,9 +12,9 @@ may make debugging easier.
 
 Computational graph
 ===================
-Internally, Loupe records all operations in a computational graph (also known
-as a directed acyclic graph). The edges of this graph denote data 
-dependencies. By tracing backward through the topological ordering of the 
+Internally, Loupe records all operations in a computational graph (or more 
+specifically, a directed acyclic graph). The edges of this graph denote data 
+dependencies. By tracing backward through a topological ordering of the 
 graph, it is possible to automatically compute the gradients of input arrays
 using the chain rule. Loupe's computational graph is defined dynamically as 
 operations are applied to arrays and the results of other Loupe functions. For
@@ -55,7 +55,7 @@ computed and the results are accumulated in each array's
 requires_grad
 =============
 The array's :attr:`~loupe.array.requires_grad` attribute specifies whether the
-gradient should be accumulated for that array during a backwards pass. By 
+gradient should be accumulated for the array during a backwards pass. By 
 setting ``requires_grad=True`` only for arrays whose gradients are required, 
 unnecessary gradient calculations may be avoided. 
 
