@@ -46,12 +46,27 @@ class Node:
 
     @property
     def data(self):
-        return None
+        """The array's data.
+
+        Returns
+        -------
+        data : ndarray
+        """
+        pass
 
     @property
     def dtype(self):
         """Data type of the array's elements."""
-        return self.data.dtype
+        pass
+
+    @property
+    def shape(self):
+        """Tuple of array dimensions."""
+        pass
+
+    @property
+    def requires_grad(self):
+        pass
 
     def getdata(self, copy=False, dtype=None):
         """Return the array's data.
@@ -98,18 +113,15 @@ class array(Node):
 
     @property
     def data(self):
-        """The array's data.
-
-        Returns
-        -------
-        data : ndarray
-        """
         return self._data
 
     @property
+    def dtype(self):
+        return self.data.dtype
+
+    @property
     def shape(self):
-        """Tuple of array dimensions."""
-        return self._data.shape
+        return self.data.shape
 
     @property
     def requires_grad(self):
@@ -140,13 +152,6 @@ class array(Node):
     @grad.setter
     def grad(self, value):
         self._grad = value
-
-    def getdata(self, copy=False, dtype=None):
-        
-        data = self.data.copy() if copy else self.data
-        if dtype is None:
-            dtype = self.dtype
-        return data.astype(dtype)
 
     def zero_grad(self):
         """Zero the array gradient."""
@@ -179,16 +184,19 @@ class Function(Node):
     """Base class for representing functions that operate on :class:`~loupe.array` 
     objects.
 
+    `Function` defines the interface for objects that operate on 
+    :class:`~loupe.array` objects but it doesn't actually implement any useful
+    functionality. See :ref:`extend` for more details on how to define a new
+    operation by subclassing `Function`.
+
     Parameters
     ----------
     inputs : list of :class:`~loupe.array`
         Array objects that the function operates on.
 
-    Notes
-    -----
-    ``Function`` only defines the interface for objects that operate on 
-    :class:`~loupe.array` objects - it doesn't actually implement any useful
-    functionality. A complete list of available functions is available
+    See also
+    --------
+     A complete list of available functions is available
     :ref:`here <api.functions>`.
 
     """
@@ -199,18 +207,16 @@ class Function(Node):
 
     @property
     def data(self):
-        """The result of evaluating the function.
-
-        Returns
-        -------
-        data : ndarray
-        """
         self._data = np.asarray(self.forward())
         return self._data
 
     @property
+    def dtype(self):
+
+        return self._data.dtype
+
+    @property
     def shape(self):
-        """Tuple of :attr:`data` dimensions.""" 
         return self._data.shape
 
     @property
@@ -286,15 +292,3 @@ class Function(Node):
 
         """
         raise NotImplementedError
-
-
-Function.getdata.__doc__ = \
-"""Evaluate the function and return the result.
-
-Parameters
-----------
-copy : bool, optional
-    Whether to force a copy of the underlying data to be returned.
-dtype : type or numpy dtype, optional
-    The dtype of the returned data.
-"""

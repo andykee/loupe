@@ -16,7 +16,8 @@ def asarray(a):
     -------
     out : :class:`array`
         Input data packaged as an :class:`array`. If input is already an
-        :class:`array`, the original input is returned.
+        :class:`array` or :class:`~loupe.core.Function`, the original input is
+        returned.
     
     Examples
     --------

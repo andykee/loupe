@@ -15,6 +15,8 @@
         
         data
         
+        dtype
+        
         inputs
         
         requires_grad
