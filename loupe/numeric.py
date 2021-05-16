@@ -361,6 +361,51 @@ class expc(loupe.core.Function):
         self.input.backward(grad)
 
 
+class sum(loupe.core.Function):
+    """Sum of array elements.
+
+    Parameters
+    ----------
+    x : array_like
+        Array to be summed.
+
+    Returns
+    -------
+    out : Function
+        The sum of a.
+
+    Note
+    ----
+    Currently sum only supports summing over all elements in the input array.
+
+    Examples
+    --------
+
+    .. code:: pycon
+
+        >>> loupe.sum([0.5, 1.5])
+        2.0
+        >>> loupe.sum([[1, 2], [3, 4]])
+        10.0
+    
+    """
+
+    # TODO: accept an axis parameter
+    def __init__(self, x):
+        self.input = loupe.asarray(x)
+        super().__init__(self.input)
+
+    def forward(self):
+        result = self.input.getdata()
+        self.cache_for_backward(result) 
+        return np.sum(result)
+
+    def backward(self, grad):
+        result, = self.cache
+        grad = np.full(result.shape, grad, dtype=result.dtype) 
+        self.input.backward(grad)
+
+
 class slice(loupe.core.Function):
     """Return a slice of the input array.
 

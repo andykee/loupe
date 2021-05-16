@@ -14,7 +14,8 @@ from loupe.numeric import (
     multiply, 
     power, 
     exp, 
-    expc, 
+    expc,
+    sum,
     slice
 )
 
