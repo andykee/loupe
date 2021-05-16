@@ -5,11 +5,11 @@ import loupe
 def test_sserror_forward():
     data = np.ones((10,10))
     model = loupe.ones((10,10))
-    err = loupe.sserror(data, model, mask=None, gain_bias_invariant=False)
+    err = loupe.sserror(model, data, mask=None, gain_bias_invariant=False)
     assert err.data == 0 
 
     model = 0.9*loupe.ones((10,10)) 
-    err = loupe.sserror(data, model, mask=None, gain_bias_invariant=False)
+    err = loupe.sserror(model, data, mask=None, gain_bias_invariant=False)
     assert np.allclose(err.data, 0.01)
 
 
@@ -60,7 +60,7 @@ def test_sserror_forward_multi():
     data_clean = model.data.copy()
     data_clean += np.random.uniform(low=-.1, high=.1, size=(3,10,10))
     data = gain * data_clean + bias
-    err = loupe.sserror(data, model, mask=None, gain_bias_invariant=True)
+    err = loupe.sserror(model, data, mask=None, gain_bias_invariant=True)
 
     assert err.data
 
@@ -72,7 +72,7 @@ def test_sserror_backward_multi():
     data_clean = model.data.copy()
     data_clean += np.random.uniform(low=-.1, high=.1, size=(3,10,10))
     data = gain * data_clean + bias
-    err = loupe.sserror(data, model, mask=None, gain_bias_invariant=True)
+    err = loupe.sserror(model, data, mask=None, gain_bias_invariant=True)
     err.backward(grad=1.0)
     assert np.all(model.grad != 0)
     assert model.grad.shape == model.shape
@@ -85,7 +85,7 @@ def test_sserror_residual():
     data_clean = model.data.copy()
     data_clean += np.random.uniform(low=-.1, high=.1, size=(3,10,10))
     data = gain * data_clean + bias
-    err = loupe.sserror(data, model, mask=None, gain_bias_invariant=False)
+    err = loupe.sserror(model, data, mask=None, gain_bias_invariant=False)
 
     r = err.residual()
     rr = model.data - data
@@ -100,7 +100,7 @@ def test_sserror_residual_gbi():
     data_clean = model.data.copy()
     data_clean += np.random.uniform(low=-.1, high=.1, size=(3,10,10))
     data = gain * data_clean + bias
-    err = loupe.sserror(data, model, mask=None, gain_bias_invariant=True)
+    err = loupe.sserror(model, data, mask=None, gain_bias_invariant=True)
 
     r = err.residual()
 
@@ -123,7 +123,7 @@ def test_sserror_residual_mask():
     mask[:,5,5] = 0
     mask[1,6,6] = 0
 
-    err = loupe.sserror(data, model, mask, gain_bias_invariant=False)
+    err = loupe.sserror(model, data, mask, gain_bias_invariant=False)
 
     r = err.residual()
     rr = (model.data - data)*mask
@@ -142,7 +142,7 @@ def test_sserror_residual_gbi_mask():
     mask[:,5,5] = 0
     mask[1,6,6] = 0
     
-    err = loupe.sserror(data, model, mask, gain_bias_invariant=True)
+    err = loupe.sserror(model, data, mask, gain_bias_invariant=True)
 
     r = err.residual()
 

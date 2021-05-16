@@ -24,10 +24,10 @@ class sserror(loupe.core.Function):
     
     Parameters
     ----------
-    f : array_like
-        Ideal or measured data
-    g : array_like
+    model : array_like
         Estimated or modeled data
+    data : array_like
+        Ideal or measured data
     mask : array_like, optional
         Mask applied to the inputs where a True value indicates that the 
         corresponding element of the array is invalid. Mask must either have
@@ -50,12 +50,12 @@ class sserror(loupe.core.Function):
     [2] A. Jurling and J. Fienup, "Applications of algorithmic differentiation to phase retrieval algorithms", J. Opt. Soc. Am. A/Vol. 31, No. 7 (2014)
     
     """
-    def __init__(self, f, g, mask=None, gain_bias_invariant=True):
-        self.f = np.asarray(f)
-        self.g = loupe.asarray(g)
+    def __init__(self, model, data, mask=None, gain_bias_invariant=True):
+        self.f = np.asarray(data)
+        self.g = loupe.asarray(model)
 
         if mask is not None:
-            if mask.shape == f.shape:
+            if mask.shape == data.shape:
                 self.mask = mask
             else:
                 self.mask = np.broadcast_to(mask, self.f.shape)
