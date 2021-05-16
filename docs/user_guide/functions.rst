@@ -1,4 +1,4 @@
-.. _functions:
+.. _user_guide.functions:
 
 *********
 Functions
@@ -45,6 +45,7 @@ The available math operations are provided below:
     power
     exp
     expc
+    sum
     absolute_square
     dft2
     einsum

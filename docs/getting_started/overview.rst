@@ -79,7 +79,7 @@ the data:
 
 .. code:: pycon
 
-    >>> cost = loupe.sserror(data, model, gain_bias_invariant=False)
+    >>> cost = loupe.sserror(model, data, gain_bias_invariant=False)
 
 We can now pass the cost function to the optimizer and ask it to solve for ``x``:
 
@@ -96,8 +96,17 @@ We can now pass the cost function to the optimizer and ask it to solve for ``x``
      success: True
            x: array([ 1.50000743, -2.50001239,  3.00013613, -6.00028557,  4.00036117])
 
+.. image:: /_static/img/quickstart_coeffs.png
+    :width: 500 px
+    :align: center
+
+.. code:: pycon
+
+    >>> print(coeffs - x)
+    [-7.4300e-06  1.2390e-05 -1.3613e-04  2.8557e-04 -3.6117e-04]
+
 We see that the optimizer recovered values for ``x`` that are nearly identical to the 
-original values of ``coeff`` that were used to generate the sample data. Great success!
+original values of ``coeffs`` that were used to generate the sample data. Great success!
 
 Getting help
 ============

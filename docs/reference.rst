@@ -49,6 +49,7 @@ Math operations
     power
     exp
     expc
+    sum
     absolute_square
     dft2
     einsum

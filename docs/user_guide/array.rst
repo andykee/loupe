@@ -1,4 +1,4 @@
-.. _array:
+.. _user_guide.array:
 
 *****
 Array

@@ -76,7 +76,7 @@ results so they do not need to be recomputed when `backward()` is called. The
 list-based caching mechanism for this purpose.
 
 Returning to our implementation of `power()`, we'll write the code to compute
-:math:`x^n`:
+:math:`y = x^n`:
 
 .. code:: python
 
@@ -103,6 +103,40 @@ additional flexibility if needed and is therefore the preferred approach.
 
 ``backward()``
 ==============
+:func:`~loupe.core.Function.backward` is called any time the gradient of the
+function needs to be computed. The ``grad`` argument is always provided and 
+represents the gradient with respect to the given output of the function.
+`backward()` should compute the gradient of each function input with 
+``requires_grad=True`` and pass the result to the input's `backward()` method.
 
-Example
-=======
+Note that any inputs that were cached in `forward()` are available in the 
+function's :attr:`~loupe.core.Function.cache` attribute. Because `cache` is a 
+Python list, list unpacking is the recommended approach for accessing the 
+cached values.
+
+We'll complete our development of the :class:`~loupe.power` function by 
+implementing its `backward()` method to compute 
+:math:`\bar{x} = n x^{n-1} \bar{y}`:
+
+.. code:: python
+
+    class power(loupe.core.Function):
+        def __init__(self, x1, x2):
+            self.input = loupe.asarray(x1)
+            self.exp = x2
+            super().__init__(self.input)
+
+        def forward(self):
+            input = self.input.getdata()
+            self.cache_for_backward(input)
+            return np.power(input, self.exp)
+
+        def backward(self, grad):
+            # Unpack the value of input that was cached during the
+            # call to forward()
+            input, = self.cache
+
+            # Compute the gradient of this function and pass the
+            # result to input.backward()
+            grad = self.exp * np.power(input, self.exp-1) * grad
+            self.input.backward(grad)
