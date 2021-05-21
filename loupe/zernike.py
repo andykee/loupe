@@ -141,25 +141,25 @@ def zernike_compose(mask, coeffs, normalize=True, rho=None, theta=None):
 
         >>> import numpy as np
         >>> import matplotlib.pyplot as plt
-        >>> import lentil
-        >>> mask = lentil.util.circlemask((256,256), 128)
-        >>> coeffs = np.random.rand(10)*1e-8
-        >>> opd = lentil.zernike.zernike_compose(mask, coeffs)
+        >>> import loupe
+        >>> mask = loupe.circlemask((256,256), 128)
+        >>> coeffs = np.random.rand(10)
+        >>> opd = loupe.zernike_compose(mask, coeffs)
         >>> plt.imshow(opd)
 
-    .. image:: /_static/img/api/zernike/zernike_compose_1.png
-        :width: 300px
+    .. image:: /_static/img/zernike_compose_random.png
+        :width: 350px
 
     Using the same mask, compute an OPD representing 200 nm focus error (Z4) and -100 nm
     astigmatism error (Z6):
 
     .. code:: pycon
 
-        >>> opd = mo.zernike.zernike_compose(mask, [0, 0, 0, 200e-9, 0, -100e-9])
+        >>> opd = loupe.zernike_compose(mask, [0, 0, 0, 200e-9, 0, -100e-9])
         >>> plt.imshow(opd)
 
-    .. image:: /_static/img/api/zernike/zernike_compose_2.png
-        :width: 300px
+    .. image:: /_static/img/zernike_compose.png
+        :width: 350px
 
     References
     ----------

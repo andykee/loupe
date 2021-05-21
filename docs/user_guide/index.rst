@@ -12,5 +12,4 @@ User Guide
     optimize
     autograd
     util
-    patterns
     extend

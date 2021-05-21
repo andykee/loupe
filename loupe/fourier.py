@@ -37,7 +37,7 @@ class dft2(loupe.core.Function):
     described in [1].
 
     Parameters
-        ----------
+    ----------
     x : array_like
         Input array.
     alpha : (2,) array_like

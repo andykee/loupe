@@ -120,3 +120,4 @@ Zernike polynomials
     zernike_compose
     zernike_fit
     zernike_remove
+    zernike_coordinates
