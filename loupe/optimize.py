@@ -117,7 +117,7 @@ class Blueprint:
         self.params = []
         index = 0
         for p in params:
-            size = p.flatten().size
+            size = p.flatten(apply_mask=True).size
             self.params.append((p, slice(index, index+size)))
             index += size
 
@@ -125,7 +125,7 @@ class Blueprint:
     def x(self):
         x = np.empty(self.params[-1][1].stop, dtype=np.float64)
         for param in self.params:
-            x[param[1]] = param[0].flatten()
+            x[param[1]] = param[0].flatten(apply_mask=True)
         return x
 
     @x.setter
@@ -133,10 +133,13 @@ class Blueprint:
         if value is not None:
             value = np.asarray(value)
             for param in self.params:
-                #TODO: need to create a method to set array.flat
-                # try:
-                param[0][...] = value[param[1]].reshape(param[0].shape)
-                #param[0].x = value[param[1]]
+                if param[0].mask is not None:
+                    # Optimizer only knows about valid values here. Need to
+                    # dump these in the right spot in the full array
+                    param[0][~param[0].mask] = value[param[1]]
+                else:
+                    param[0][...] = value[param[1]].reshape(param[0].shape) 
+
 
     def cost(self, x=None):
         # Evaluate the cost function at x
@@ -157,7 +160,7 @@ class Blueprint:
         
         grad = np.zeros(self.params[-1][1].stop, dtype=np.float64)
         for param in self.params:
-            grad[param[1]] = param[0].grad.flatten()
+            grad[param[1]] = param[0].grad_flatten(apply_mask=True)
         return grad
 
     def zero_grad(self):

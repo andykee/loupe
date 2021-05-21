@@ -92,18 +92,25 @@ class array(Node):
     ----------
     object : array_like
         An array or other data type that can be interpreted as an array.
-    requires_grad : bool, optional
-        It True, gradients will be computed for this array. Default is False.
     dtype : data-type, optional
         The desired data-type for the array. If not given, the type will be
         inferred from the supplied data object.
+    mask : array_like, optional
+        Mask applied to the array where a True value indicates that the 
+        corresponding element of the array is invalid. Mask must have the same 
+        shape as the array and contain entries that are castable to bool. If 
+        None (default), the array is not masked.
+    requires_grad : bool, optional
+        It True, gradients will be computed for this array. Default is False.
+    
     """
 
     # TODO: masking, scaling, bounds?
 
-    def __init__(self, object, requires_grad=False, dtype=None):
+    def __init__(self, object, dtype=None, mask=None, requires_grad=False):
 
         self._data = np.asarray(object, dtype=dtype)
+        self.mask = np.asarray(mask, dtype=bool)
         self.requires_grad = requires_grad
         self.grad = np.zeros(self._data.shape, dtype=float)
 
@@ -157,9 +164,26 @@ class array(Node):
         """Zero the array gradient."""
         self.grad = np.zeros_like(self._data)
 
-    def flatten(self):
-        """Return the array flattened into one dimension."""
-        return self._data.flatten()
+    def flatten(self, apply_mask=False):
+        """Return the array flattened into one dimension.
+        
+        Parameters
+        ----------
+        apply_mask : bool, optional
+            If True, only non-masked data is returned. Default is False.
+        """
+        if self.mask is not None and apply_mask:
+            # Since True corresponds to data to be masked, ~mask is the slice
+            # we really want. Note this operation implicitly flattens the data
+            return self._data[~self.mask]
+        else:
+            return self._data.flatten()
+
+    def grad_flatten(self, apply_mask=False):
+        if self.mask is not None and apply_mask:
+            return self._grad[~self.mask]
+        else:
+            return self._grad.flatten()
 
     def backward(self, grad):
         """Compute the gradient of the array.
