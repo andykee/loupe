@@ -45,5 +45,6 @@ from loupe.zernike import (
     zernike_compose, 
     zernike_basis, 
     zernike_fit, 
-    zernike_remove
+    zernike_remove,
+    zernike_coordinates
 )
