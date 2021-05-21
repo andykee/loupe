@@ -175,7 +175,7 @@ def shift(a, shift):
     R = dr * np.fft.fftfreq(a.shape[0])
     C = dc * np.fft.fftfreq(a.shape[1])
 
-    RR, CC = np.meshgrid(R, C)
+    RR, CC = np.meshgrid(R, C, indexing='ij')
     K = np.exp(-1j*2*np.pi*(RR+CC))
     shifted = np.fft.ifft2(np.fft.fft2(a)*K)
 
