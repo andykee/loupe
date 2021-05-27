@@ -36,10 +36,7 @@ class Node:
         return np.array_str(self.data)
 
     def __repr__(self):
-        prefix = 'array('
-        suffix = ')'
-        array_str = np.array2string(self.data, prefix=prefix, suffix=suffix)
-        return prefix + array_str + suffix
+        return np.array_repr(self.data)
 
     def __getitem__(self, index):
         return loupe.numeric.slice(self, index)
