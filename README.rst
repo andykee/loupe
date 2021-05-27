@@ -11,10 +11,6 @@ problems using built-in algorithmic differentiation (autograd).
 * **Code:** https://github.com/andykee/loupe/
 * **Issue tracker:** https://github.com/andykee/loupe/issues/
 
-Loupe is still under active development and new features continue to be added. Until
-Loupe reaches version 1.0, the API is not guaranteed to be stable, but changes breaking
-backwards compatibility will be noted.
-
 Installing
 ----------
 Install and update Loupe using `pip`_:
