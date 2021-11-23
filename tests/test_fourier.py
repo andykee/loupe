@@ -16,6 +16,17 @@ def test_dft2(n):
 
 
 @pytest.mark.parametrize("n", [10, 11])
+def test_dft2_3d(n):
+
+    f = np.random.rand(3, n, n) + 1j * np.random.rand(3, n, n)
+
+    F_dft = loupe.dft2(f, (1/n, 1/n), unitary=False)
+    F_fft = np.fft.fftshift(np.fft.fft2(np.fft.ifftshift(f)))
+
+    assert np.allclose(F_dft, F_fft)
+
+
+@pytest.mark.parametrize("n", [10, 11])
 def test_dft2_backward(n):
 
     f = loupe.rand(size=(n, n), requires_grad=True)
