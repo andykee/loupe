@@ -95,20 +95,26 @@ class dft2(loupe.core.Function):
         alpha = _sanitize_ordered_pair(self.alpha.getdata(), dtype=float)
         shift = _sanitize_ordered_pair(self.shift, dtype=float)
 
-        shape, strides = _as_strided_args(input, self.output_shape)
-        result = np.empty(shape, dtype=complex)
-        W_row, W_row_conj, W_col, W_col_conj = [], [], [], []
+        output_shape = _sanitize_output_shape(input, self.output_shape)
+        dft_shape = output_shape[-2:]
+        result = np.empty(output_shape, dtype=complex)
+        W_row, W_row_conj, W_row_kern, W_col, W_col_conj, W_col_kern = [], [], [], [], [], []
 
-        for n, x in enumerate(as_strided(input, shape=shape, strides=strides, writeable=False)):
-            Wr = _dft2_matrix(x.shape[0], shape[1], alpha[0], shift[0])
-            Wc = _dft2_matrix(x.shape[1], shape[2], alpha[1], shift[1])
-            tmp = np.dot(Wr.T, x)
-            result[n] = np.dot(tmp, Wc)
+        if input.ndim == 2:
+            input = np.expand_dims(input, 0)
+
+        for n, x in enumerate(input):
+            Wr, Wrk = _dft2_matrix(x.shape[0], dft_shape[0], alpha[0], shift[0])
+            Wc, Wck = _dft2_matrix(x.shape[1], dft_shape[1], alpha[1], shift[1])
+
+            result[n] = np.dot(np.dot(Wr.T, x), Wc)
 
             W_row.append(Wr)
             W_row_conj.append(np.conj(Wr))
+            W_row_kern.append(Wrk)
             W_col.append(Wc)
             W_col_conj.append(np.conj(Wc))
+            W_col_kern.append(Wck)
 
         result = np.squeeze(result)
 
@@ -122,8 +128,8 @@ class dft2(loupe.core.Function):
         # NOTE: result is purposely saved before we apply unitary normalization.
         # The result that is used in the backward function is expected to be
         # "clean" (i.e. unitary=False)
-        self.cache_for_backward(input, alpha, W_row, W_row_conj, W_col, W_col_conj,
-                                result, root_alpha, norm_coeff)
+        self.cache_for_backward(input, alpha, W_row, W_row_conj, W_row_kern, W_col,
+                                W_col_conj, W_col_kern, result, root_alpha, norm_coeff)
 
         if self.unitary:
             result *= norm_coeff
@@ -133,32 +139,41 @@ class dft2(loupe.core.Function):
     def backward(self, grad):
 
         # unpack saved_inputs
-        (input, alpha, W_row, W_row_conj, W_col, W_col_conj,
+        (input, alpha, W_row, W_row_conj, W_row_kern, W_col, W_col_conj, W_col_kern,
          result, root_alpha, norm_coeff) = self.cache
 
         # backward() needs the "clean" (non-unitary) gradient. If unitary = True
         # we need to multiply the incoming gradient by norm_coeff. Because
         # norm_coeff is set to 1 in forward() if unitary = False, it is safe to
         # always multiply grad by norm_coeff here.
-        grad_clean = grad * norm_coeff
+        grad *= norm_coeff
 
-        shape, strides = _as_strided_args(grad_clean, input.shape[-2:])
-        input_grad = np.empty(shape, dtype=complex)
+        if self.input.requires_grad or self.alpha.requires_grad:
 
-        for n, x in enumerate(as_strided(grad_clean, shape=shape, strides=strides, writeable=False)):
-            h_grad = np.dot(W_row_conj[n], x)
-            input_grad[n] = np.dot(h_grad, W_col_conj[n].T)
+            output_shape = _sanitize_output_shape(grad, input.shape[-2:])
+            h_grad = []
+            input_grad = np.empty(output_shape, dtype=complex)
 
-        input_grad = np.squeeze(input_grad)
+            if grad.ndim == 2:
+                grad = np.expand_dims(grad, 0)
 
-        self.input.backward(input_grad)
+            for n, x in enumerate(grad):
+                # h_grad is the dot product of W_row_conj and the "true" gradient.
+                h_grad.append(np.dot(W_row_conj[n], x))
+                input_grad[n] = np.dot(h_grad[n], W_col_conj[n].T)
+
+            input_grad = np.squeeze(input_grad)
+
+            self.input.backward(input_grad)
+
+        if self.alpha.requires_grad:
+            pass
 
 
 @functools.lru_cache(maxsize=32)
 def _dft2_matrix(n, N, alpha, shift):
-    w = -2.0 * np.pi * np.outer(_coords(n)-shift, _coords(N)-shift)
-    E = np.exp(1j * w * alpha)
-    return E
+    kernel = -2.0 * np.pi * np.outer(_coords(n)-shift, _coords(N)-shift)
+    return np.exp(1j * alpha * kernel), kernel
 
 
 @functools.lru_cache(maxsize=32)
@@ -177,8 +192,7 @@ def _sanitize_ordered_pair(x, dtype):
     return [dtype(x[0]), dtype(x[1])]
 
 
-def _as_strided_args(input, output_shape):
-    depth = 1 if input.ndim ==2 else input.shape[0]
+def _sanitize_output_shape(input, output_shape):
 
     shape = output_shape if output_shape is not None else input.shape[-2:]
     if len(input.shape) == 2:
@@ -186,6 +200,4 @@ def _as_strided_args(input, output_shape):
     else:
         shape = (input.shape[0], *shape)
 
-    strides = input.strides if depth > 1 else (0, *input.strides)
-    print(shape, strides)
-    return shape, strides
+    return shape
