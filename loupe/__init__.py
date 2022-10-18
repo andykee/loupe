@@ -37,7 +37,8 @@ from loupe.util import (
     randn,
     centroid,
     shift,
-    register
+    register,
+    medfix2
 )
 
 from loupe.zernike import (

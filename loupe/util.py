@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.lib.stride_tricks import as_strided
 
 import loupe
 
@@ -285,3 +286,54 @@ def register(arr, ref, oversample, return_error=False):
         return shift, err
 
     return shift
+
+def medfix2(input, mask, kernel=(3,3)):
+    """Fix masked entries in a 2-dimensional array via median filtering.
+
+    Parameters
+    ----------
+    input : array_like
+        A 2-dimensional input array
+    mask : array_like
+        A 2-dimensional
+    kernel : array_like, optional
+        A scalar or list of length 2 specifying the filter window in 
+        each dimension. Elements of *kernel* should be odd. If *kernel*
+        is a scalar, it is used for each dimension. Default is (3,3).
+    Returns
+    -------
+    out : ndarray
+        An array the same size as input where the masked entries are 
+        replaced with median filtered values.
+    
+    """
+    # force a copy by calling array instead of asarray
+    input = np.array(input, dtype=float)
+
+    mask = np.asarray(mask, dtype=bool)
+
+    kernel = np.asarray(kernel)
+    if kernel.shape == ():
+        kernel = np.repeat(kernel, 2)
+    if np.any(kernel % 2 == 0):
+        raise ValueError("Each element of kernel must be odd")
+
+    input[mask] = np.nan
+
+    pad_size = np.array((kernel-1)/2, dtype=int)
+    input_pad = np.full((input.shape[0] + pad_size[0] * 2, 
+                         input.shape[1] + pad_size[1] * 2), np.nan)
+    slc = (slice(pad_size[0], pad_size[0] + input.shape[0]), 
+           slice(pad_size[1], pad_size[1] + input.shape[1]))
+    input_pad[slc] = input
+
+    input_pad = as_strided(input_pad, 
+                           shape=(input_pad.shape[0], input_pad.shape[1], kernel[0], kernel[1]),
+                           strides=input_pad.strides + input_pad.strides)
+    input_pad = input_pad.reshape((input_pad.shape[0], input_pad.shape[1], np.prod(kernel)))
+
+    mask_idx = np.where(mask)
+
+    input[mask_idx] = np.nanmedian(input_pad[mask_idx[0], mask_idx[1], :], axis=1)
+
+    return input

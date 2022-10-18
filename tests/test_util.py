@@ -40,3 +40,11 @@ def test_register():
     s, e = loupe.register(arr, ref, oversample=10, return_error=True)
     assert np.array_equal(s, [-1, -1])
     assert np.allclose(e, 0, atol=1e-6)
+
+
+def test_medfix2():
+    a = np.random.normal(size=(3,3))
+    mask = np.zeros_like(a)
+    mask[1,1] = 1
+    mask = np.asarray(mask, dtype=bool)
+    assert(np.array_equal(loupe.medfix2(a, mask)[1,1], np.median(a[~mask])))
