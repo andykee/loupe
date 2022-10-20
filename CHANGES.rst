@@ -1,6 +1,12 @@
 Release notes
 =============
 
+v1.2.0
+------
+Released October 20, 2022
+
+* New uility function for fixing masked 2-dimensional arrays via
+  median filtering
 
 v1.1.0
 ------

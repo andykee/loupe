@@ -107,6 +107,7 @@ Image tools
     :toctree: generated/
 
     centroid
+    medfix2
     shift
     register
 
