@@ -187,5 +187,4 @@ def _as_strided_args(input, output_shape):
         shape = (input.shape[0], *shape)
 
     strides = input.strides if depth > 1 else (0, *input.strides)
-    print(shape, strides)
     return shape, strides
