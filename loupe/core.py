@@ -126,6 +126,10 @@ class array(Node):
     @property
     def shape(self):
         return self.data.shape
+    
+    @property
+    def ndim(self):
+        return self.data.ndim
 
     @property
     def requires_grad(self):
@@ -239,6 +243,10 @@ class Function(Node):
     @property
     def shape(self):
         return self._data.shape
+    
+    @property
+    def ndim(self):
+        return self._data.ndim
 
     @property
     def inputs(self):

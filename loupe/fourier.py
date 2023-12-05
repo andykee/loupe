@@ -40,18 +40,27 @@ class dft2(loupe.core.Function):
     Parameters
     ----------
     x : array_like
-        Input array.
+        Input array, can be complex. Must 
     alpha : (2,) array_like
         Output plane sampling frequency in terms of (row, col).
     shape : (2,) arrqy_like, optional
         Shape of the output. If `shape` is None (default), the shape of the input
         is used.
+    shift : sequence of floats, optional
+        Number of pixels in (r,c) to shift the DC pixel in the output plane with
+        the origin centrally located in the plane. Default is (0, 0). Can be 
+        2-dimensional to provide independent shifts for each Fourier transform
+        if `x` is 3-dimensional.
+    offset : sequence of floats, optional
+        Offset of the center of the input `x` in terms of number of pixels in 
+        (r,c). Default is (0, 0). Can be 2-dimensional to provide independent
+        offsets for each Fourier transform if `x` is 3-dimensional.
     unitary : bool, optional
         Normalization flag. If True, a normalization is performed on the output
         such that the DFT operation is unitary. Default is True.
-    shift : (2,) array_like, optional
-        Number of pixels in (r,c) to shift the DC pixel in the output plane with
-        the origin centrally located in the plane. Default is (0, 0).
+    axes : sequence of ints, optional
+        Axes over which to compute the Fourier transform. If not given, the last 
+        two axes are used.
 
     Returns
     -------
@@ -81,35 +90,55 @@ class dft2(loupe.core.Function):
     [1] Soummer, et. al. Fast computation of Lyot-style coronagraph propagation (2007)
 
     """
-    def __init__(self, x, alpha, shape=None, unitary=True, shift=(0,0)):
+    def __init__(self, x, alpha, shape=None, shift=(0,0), offset=(0,0), unitary=True, axes=None):
 
         self.input = loupe.asarray(x)
+        if self.input.ndim not in (2,3):
+            raise ValueError("Input array must have ndim == 2 or 3")
+
         self.alpha = loupe.asarray(alpha)
-        self.output_shape = shape
+        self.out_shape, self.axes = _cook_nd_args(self.input, shape, axes)
+
+        # figure out which index is the iteration index
+        mask = np.ones(3, dtype=bool)
+        mask[self.axes] = False
+        self.iter_axis = np.squeeze(np.arange(3)[mask])
+
+        # broadcast shift and offset as necessary
+        depth = self.input.shape[self.iter_axis]
+
+        self.shift = np.broadcast_to(shift, (depth, 2))
+        self.offset = np.broadcast_to(offset, (depth, 2))
         self.unitary = unitary
-        self.shift = shift
         super().__init__(self.input, self.alpha)
 
     def forward(self):
         input = self.input.getdata()
-        alpha = _sanitize_ordered_pair(self.alpha.getdata(), dtype=float)
-        shift = _sanitize_ordered_pair(self.shift, dtype=float)
 
-        shape, strides = _as_strided_args(input, self.output_shape)
-        result = np.empty(shape, dtype=complex)
+        if input.ndim == 2:
+            input = input[np.newaxis,:]
+
+        alpha = np.broadcast_to(self.alpha.getdata(), (2,))
+
+        # rearrange input so that it is arranged as
+        # [iteration axis, rows, cols]
+        input = np.moveaxis(input, [self.iter_axis, *self.axes], np.arange(3))
+        
+        result = []
         W_row, W_row_conj, W_col, W_col_conj = [], [], [], []
 
-        for n, x in enumerate(as_strided(input, shape=shape, strides=strides, writeable=False)):
-            Wr = _dft2_matrix(x.shape[0], shape[1], alpha[0], shift[0])
-            Wc = _dft2_matrix(x.shape[1], shape[2], alpha[1], shift[1])
-            tmp = np.dot(Wr.T, x)
-            result[n] = np.dot(tmp, Wc)
-
+        for x, shift, offset in zip(input, self.shift, self.offset):
+            Wr, Wc = _dft2_matrices(input.shape[1], input.shape[2],
+                                    self.out_shape[0], self.out_shape[1],
+                                    alpha[0], alpha[1],
+                                    shift[0], shift[1],
+                                    offset[0], offset[1])
+            result.append(np.dot(Wr.dot(x), Wc))
             W_row.append(Wr)
             W_row_conj.append(np.conj(Wr))
             W_col.append(Wc)
             W_col_conj.append(np.conj(Wc))
-
+        
         result = np.squeeze(result)
 
         if self.unitary:
@@ -154,6 +183,47 @@ class dft2(loupe.core.Function):
         self.input.backward(input_grad)
 
 
+def _cook_nd_args(a, s=None, axes=None):
+    # slightly modified version of numpy's function of the
+    # same name
+    if s is None:
+        if axes is None:
+            if a.ndim == 2:
+                s = list(a.shape)
+            elif a.ndim == 3:
+                s = list(a.shape[1:3])
+            else:
+                raise ValueError("Array must have ndim == 2 or 3")
+        else:
+            s = np.take(a.shape, axes)
+    s = list(s)
+    if axes is None:
+        axes = list(range(-len(s), 0))
+    if len(s) != len(axes):
+        raise ValueError("Shape and axes have different lengths.")
+    return s, axes
+
+
+def _dft2_matrices(m, n, M, N, alphar, alphac, shiftr, shiftc, offsetr, offsetc):
+    R, S, U, V = _dft2_coords(m, n, M, N)
+    E1 = np.exp(-2.0 * 1j * np.pi * alphar * np.outer(R-shiftr+offsetr, U-shiftr)).T
+    E2 = np.exp(-2.0 * 1j * np.pi * alphac * np.outer(S-shiftc+offsetc, V-shiftc))
+    return E1, E2
+
+@functools.lru_cache(maxsize=32)
+def _dft2_coords(m, n, M, N):
+    # R and S are (r,c) coordinates in the (m x n) input plane f
+    # V and U are (r,c) coordinates in the (M x N) output plane F
+
+    R = np.arange(m) - np.floor(m/2.0)
+    S = np.arange(n) - np.floor(n/2.0)
+    U = np.arange(M) - np.floor(M/2.0)
+    V = np.arange(N) - np.floor(N/2.0)
+
+    return R, S, U, V
+
+
+
 @functools.lru_cache(maxsize=32)
 def _dft2_matrix(n, N, alpha, shift):
     w = -2.0 * np.pi * np.outer(_coords(n)-shift, _coords(N)-shift)
@@ -166,7 +236,6 @@ def _coords(n):
     #TODO: ensure n is a python primitive type
     # It needs to be hashable for LRU cache to work
     return np.arange(n) - np.floor(n/2.0)
-
 
 def _sanitize_ordered_pair(x, dtype):
     x = np.asarray(x)
