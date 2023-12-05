@@ -107,7 +107,7 @@ class array(Node):
     def __init__(self, object, dtype=None, mask=None, requires_grad=False):
 
         self._data = np.asarray(object, dtype=dtype)
-        self.mask = np.asarray(mask, dtype=bool)
+        self.mask = mask
         self.requires_grad = requires_grad
         self.grad = np.zeros(self._data.shape, dtype=float)
 
@@ -130,6 +130,20 @@ class array(Node):
     @property
     def ndim(self):
         return self.data.ndim
+    
+    @property
+    def mask(self):
+        return self._mask
+    
+    @mask.setter
+    def mask(self, value):
+        if value is None:
+            self._mask = None
+        else:
+            mask = np.asarray(value, dtype=bool)
+            if mask.shape != self.shape:
+                raise ValueError('Mask must have same shape as array')
+            self._mask = mask
 
     @property
     def requires_grad(self):
