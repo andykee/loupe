@@ -174,11 +174,10 @@ class dft2(loupe.core.Function):
         if grad_clean.ndim == 2:
             grad_clean = grad_clean[np.newaxis,:]
 
-        input_grad = np.empty(input.shape, dtype=complex)
+        input_grad = []
         for n, x in enumerate(grad_clean):
-            h_grad = np.dot(W_row_conj[n], x)
-            input_grad[n] = np.dot(h_grad, W_col_conj[n].T)
-
+            Wr, Wc = W_row_conj[n], W_col_conj[n]
+            input_grad.append(np.dot(Wr.T.dot(x), Wc.T))
         input_grad = np.squeeze(input_grad)
 
         self.input.backward(input_grad)
