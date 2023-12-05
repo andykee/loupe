@@ -122,8 +122,12 @@ class Blueprint:
             index += size
 
     @property
+    def size(self):
+        return self.params[-1][1].stop
+
+    @property
     def x(self):
-        x = np.empty(self.params[-1][1].stop, dtype=np.float64)
+        x = np.empty(self.size, dtype=np.float64)
         for param in self.params:
             x[param[1]] = param[0].flatten(apply_mask=True)
         return x
