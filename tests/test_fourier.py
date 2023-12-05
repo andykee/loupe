@@ -40,6 +40,19 @@ def test_dft2_backward(n):
     assert np.allclose(f.grad, g.real * n**2)
 
 
+@pytest.mark.parametrize("n", [10, 11])
+def test_dft2_3d_backward(n):
+
+    f = loupe.rand(size=(3, n, n), requires_grad=True)
+    F = loupe.dft2(f, (1/n, 1/n), unitary=False)
+
+    grad = np.ones(shape=(3, n, n))
+    F.backward(grad)
+
+    g = np.fft.fftshift(np.fft.ifft2(np.fft.ifftshift(grad))) 
+
+    assert np.allclose(f.grad, g.real * n**2)
+
 def test_dft2_unitary():
     n = 10
     f = np.random.rand(n, n) + 1j * np.random.rand(n, n)
