@@ -19,6 +19,8 @@
         
         inputs
         
+        ndim
+        
         requires_grad
         
         shape

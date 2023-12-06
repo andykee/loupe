@@ -1,8 +1,4 @@
 # Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 import os
 import sys
@@ -16,68 +12,82 @@ path = os.path.abspath(os.path.dirname(__file__))
 # -- Project information -----------------------------------------------------
 project = 'Loupe'
 author = 'Andy Kee'
-copyright = f'{datetime.datetime.now().year} Andy Kee'
+copyright = f'2021-{datetime.datetime.now().year} Andy Kee'
 
 with open(os.path.normpath(os.path.join(path, '..', 'loupe', '__init__.py'))) as f:
     version = release = re.search("__version__ = '(.*?)'", f.read()).group(1)
 
+today_fmt = '%B %d, %Y'
+
 # -- General configuration ---------------------------------------------------
 
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.mathjax',
               'sphinx.ext.napoleon',
-              'sphinx.ext.viewcode']
+              'sphinx.ext.viewcode',
+              'sphinx_design',
+              'matplotlib.sphinxext.plot_directive']
 
-# Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 master_doc = 'index'
 source_suffix = '.rst'
 
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
 # -- Options for HTML output -------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
 html_theme = "pydata_sphinx_theme"
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
 
 html_theme_options = {
     'show_prev_next': False,
     'github_url': 'https://github.com/andykee/loupe',
-    'google_analytics_id': '267751812',
-    "footer_items": ["copyright"]
+    "logo": {
+        "link": "index",
+        "image_light": "_static/logo-light.png",
+        "image_dark": "_static/logo-dark.png",
+   },
+   "collapse_navigation": True,
+   "navbar_persistent": ["search-button"],
+   "pygment_light_style": "tango",
+   "pygment_dark_style": "nord",
+   "favicons": [
+      {
+         "rel": "icon",
+         "sizes": "16x16",
+         "href": "favicon/favicon-16x16.png",
+      },
+      {
+         "rel": "icon",
+         "sizes": "32x32",
+         "href": "favicon/favicon-32x32.png",
+      },
+      {
+         "rel": "icon",
+         "sizes": "48x48",
+         "href": "favicon/favicon-48x48.png",
+      },
+      {
+         "rel": "apple-touch-icon",
+         "sizes": "180x180",
+         "href": "favicon/apple-touch-icon-180x180.png",
+         "color": "#000000",
+      },
+   ]
 }
 
-html_logo = '_static/img/loupe.png'
-
-html_additional_pages = {
-    'index': 'indexcontent.html'
+html_sidebars = {
+    'index': []
 }
 
+html_static_path = ['_static']
+html_show_sphinx = False
 html_show_sourcelink = False
-
 html_scaled_image_link = False
 
-html_js_files = ['js/copybutton.js']
-
-html_css_files = ['css/loupe.css', 'css/syntax-highlighting.css']
-
-pygments_style = 'default'
+html_css_files = ['loupe.css']
 
 # if true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
@@ -90,3 +100,38 @@ autodoc_default_options = {
 }
 
 autosummary_generate = True
+
+# -- Plot config -------------------------------------------------------------
+dpi = 144
+
+plot_rcparams = {}  # noqa
+plot_rcparams['font.size'] = 12*72/dpi  # 12 pt
+plot_rcparams['axes.titlesize'] = 14*72/dpi  # 14 pt
+plot_rcparams['axes.labelsize'] = 12*72/dpi  # 12 pt
+plot_rcparams['axes.linewidth'] = 0.5
+plot_rcparams['lines.linewidth'] = 1
+plot_rcparams['lines.markersize'] = 2
+plot_rcparams['xtick.major.width'] = 0.5
+plot_rcparams['xtick.major.size'] = 2
+plot_rcparams['ytick.major.width'] = 0.5
+plot_rcparams['ytick.major.size'] = 2
+plot_rcparams['grid.linewidth'] = 0.5
+plot_rcparams['xtick.labelsize'] = 12*72/dpi  # 12 pt
+plot_rcparams['ytick.labelsize'] = 12*72/dpi  # 12 pt
+plot_rcparams['legend.fontsize'] = 12*72/dpi  # 12 pt
+plot_rcparams['figure.figsize'] = (2.5, 2.5)
+plot_rcparams['figure.subplot.wspace'] = 0.2
+plot_rcparams['figure.subplot.hspace'] = 0.2
+plot_rcparams['savefig.bbox'] = 'tight'
+plot_rcparams['savefig.transparent'] = True
+
+plot_apply_rcparams = True
+plot_html_show_source_link = False
+plot_html_show_formats = False
+plot_formats = [('png', dpi*2)]
+plot_pre_code = """
+import lentil
+import matplotlib.pyplot as plt
+import numpy as np
+np.random.seed(12345)
+"""

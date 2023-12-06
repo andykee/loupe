@@ -38,3 +38,27 @@ class absolute_square(loupe.core.Function):
 
 
 abs_square = absolute_square
+
+
+class normavg(loupe.core.Function):
+
+    def __init__(self, x):
+        self.input = loupe.asarray(x)
+        super().__init__(self.input)
+
+    def forward(self):
+        input = self.input.getdata()
+        mean = np.sum(input)
+        result = np.reciprocal(mean) * input
+        self.cache_for_backward(mean)
+        return result
+
+    def backward(self, grad):
+        print('grad pre:', np.mean(grad))
+        mean, = self.cache
+        grad = np.reciprocal(mean) * grad
+        #grad += -1*np.reciprocal(mean)
+        print('grad_post:', np.mean(grad))
+        self.input.backward(grad)
+
+

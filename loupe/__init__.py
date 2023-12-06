@@ -23,7 +23,7 @@ from loupe.optimize import optimize
 
 from loupe.shape import circle, circlemask, hexagon, slit
 
-from loupe.special import absolute_square, abs_square
+from loupe.special import absolute_square, abs_square, normavg
 
 from loupe.tensordot import tensordot
 
