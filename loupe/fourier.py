@@ -98,11 +98,7 @@ class dft2(loupe.core.Function):
 
         self.alpha = loupe.asarray(alpha)
         self.out_shape, self.axes = _cook_nd_args(self.input, shape, axes)
-
-        # figure out which index is the iteration index
-        mask = np.ones(3, dtype=bool)
-        mask[self.axes] = False
-        self.iter_axis = np.squeeze(np.arange(3)[mask])
+        self.iter_axis = _iter_axis(self.axes)
 
         # broadcast shift and offset as necessary
         depth = self.input.shape[self.iter_axis]
@@ -202,6 +198,12 @@ def _cook_nd_args(a, s=None, axes=None):
     if len(s) != len(axes):
         raise ValueError("Shape and axes have different lengths.")
     return s, axes
+
+
+def _iter_axis(axes):
+    mask = np.ones(3, dtype=bool)
+    mask[axes] = False
+    return np.squeeze(np.arange(3)[mask])
 
 
 def _dft2_matrices(m, n, M, N, alphar, alphac, shiftr, shiftc, offsetr, offsetc):

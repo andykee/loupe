@@ -443,3 +443,4 @@ class slice(loupe.core.Function):
         result_grad = np.zeros(result.shape, dtype=result.dtype)
         result_grad[self.slc] = grad
         self.input.backward(result_grad)
+        
