@@ -54,6 +54,7 @@ Math operations
     dft2
     einsum
     tensordot
+    rebin
 
 Array manipulation
 ------------------

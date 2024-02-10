@@ -132,6 +132,10 @@ class array(Node):
         return self.data.ndim
     
     @property
+    def strides(self):
+        return self.data.strides
+
+    @property
     def mask(self):
         return self._mask
     
