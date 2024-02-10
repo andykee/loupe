@@ -1,6 +1,15 @@
 Release notes
 =============
 
+v1.3.0
+------
+Released February 9, 2024
+
+* New rebin function
+* Migrade documentation from readthedocs to github
+* Fix bug in dft2 strides when passed an array with ndim = 3
+* minor code cleanup
+
 v1.2.0
 ------
 Released October 20, 2022
