@@ -54,6 +54,9 @@ class sserror(loupe.core.Function):
         self.f = np.asarray(data)
         self.g = loupe.asarray(model)
 
+        if not np.array_equal(self.f.shape, self.g.shape):
+            raise ValueError(f'model and data shape mismatch: {self.g.shape} != {self.f.shape}')
+
         if mask is not None:
             if mask.shape == data.shape:
                 self.mask = mask
