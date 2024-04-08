@@ -1,6 +1,12 @@
 Release notes
 =============
 
+v1.3.1
+------
+Released April 8, 2024
+
+* Bugfixes
+
 v1.3.0
 ------
 Released February 9, 2024
