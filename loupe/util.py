@@ -3,7 +3,7 @@ from numpy.lib.stride_tricks import as_strided
 
 import loupe
 
-def asarray(a):
+def asarray(a, dtype=None, mask=None, requires_grad=False):
     """Convert the input to an array.
     
     Parameters
@@ -12,6 +12,16 @@ def asarray(a):
         Input data, in any form that can be converted to an array. This 
         includes lists, lists of tuples, tuples, tuples of tuples, 
         tuples of lists and ndarrays.
+    dtype : data-type, optional
+        The desired data-type for the array. If not given, the type will be
+        inferred from the supplied data object.
+    mask : array_like, optional
+        Mask applied to the array where a True value indicates that the 
+        corresponding element of the array is invalid. Mask must have the same 
+        shape as the array and contain entries that are castable to bool. If 
+        None (default), the array is not masked.
+    requires_grad : bool, optional
+        It True, gradients will be computed for this array. Default is False.
 
     Returns
     -------
@@ -40,9 +50,12 @@ def asarray(a):
 
     """
     if isinstance(a, (loupe.array, loupe.core.Function)):
-        return a
+        if any((dtype != None, mask != None, requires_grad != False)):
+            raise ValueError('Unable to modify existing loupe array.')
+        else:
+            return a
     elif isinstance(a, (int, float, complex, list, tuple, np.ndarray)):
-        return loupe.array(a)
+        return loupe.array(a, dtype=dtype, mask=mask, requires_grad=requires_grad)
     else:
         raise TypeError(f'Unsupported type. Cannot create array from \
                           {a.__class__.__name__}')
